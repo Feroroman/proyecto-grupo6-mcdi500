@@ -64,3 +64,6 @@ luego `notebooks/F2/F2_Pipeline.ipynb` de la misma forma.
 ## Convención de commits
 `docs:` documentación · `data:` datos · `feat:` nueva funcionalidad · `fix:` corrección · `test:` pruebas.
 Ramas por integrante y fase, integradas por pull request.
+
+## Ejecución verificada
+- César Lorca Bacián · macOS · Python 3.14.7 · 13-09-2026: pruebas 8/8 y 11/11, notebooks F1 y F2 ejecutados sin errores.
