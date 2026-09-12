@@ -1,0 +1,422 @@
+<html><head><meta charset="utf-8"><title>F1_Definicion.ipynb ejecutado</title><style>
+body{font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;max-width:19cm;margin:1cm auto;color:#222}
+h1{font-size:17pt;color:#1E3A5F} h2{font-size:13pt;color:#1E3A5F;margin-top:18pt} h3{font-size:11pt}
+pre{font-family:'Courier New',monospace;font-size:8.5pt;white-space:pre-wrap;word-wrap:break-word;margin:0}
+.in{border-left:3px solid #1E3A5F;background:#F4F6FA;padding:6px 8px;margin:8px 0 2px 0}
+.out{border-left:3px solid #2C5F2D;background:#FAFAFA;padding:6px 8px;margin:0 0 10px 0}
+.n{color:#888;font-size:8pt;font-family:'Courier New'} img{max-width:100%}
+table{border-collapse:collapse;font-size:9pt} td,th{border:1px solid #bbb;padding:2px 6px}
+</style></head><body>
+<h1>Fase 1 · Definición del problema, entorno reproducible y estructura del proyecto</h1>
+<p><strong>MCDI500 · Programación para la Ciencia de Datos</strong> · Grupo 6<br />
+Integrantes: <em>Fernanda Ovalle Román · Sebastián Cajales Cid · César Lorca Bacián</em></p>
+<p>Este notebook documenta la Fase 1 del proyecto transversal. No analiza datos: deja las condiciones
+para que el análisis de la Fase 2 sea reproducible, trazable y compartido.</p>
+<blockquote>
+<p>Antes de entregar: <strong>Kernel → Restart Kernel and Run All Cells</strong>. Se ejecuta desde la carpeta <code>notebooks/</code>; las rutas se resuelven respecto de la raíz del repositorio.</p>
+</blockquote>
+<h2>1. Contexto problematizador y pregunta analizable</h2>
+<p><strong>Situación.</strong> En Chile la duración real de las carreras universitarias suele superar la duración formal,
+con costos para estudiantes e instituciones. El Mineduc publica cada año los registros de titulados, pero
+no está claro qué características de la carrera y de la institución acompañan una titulación más larga.</p>
+<p><strong>Problema.</strong> No se conoce qué factores observables se asocian a una mayor duración hasta el título.</p>
+<p><strong>Pregunta analizable.</strong> ¿Qué factores observables —tipo de universidad (CRUCH/privada), jornada, modalidad,
+área de conocimiento, región de la sede, sexo y rango etario— se asocian a un mayor número de semestres
+hasta la obtención del título (<code>dur_total_carr</code>) entre los titulados de pregrado universitario de 2025?</p>
+<p><strong>Alcance.</strong> Solo pregrado en universidades (quedan fuera IP, CFT, postítulos y posgrados).
+Análisis descriptivo y de asociación; no se construyen modelos predictivos.</p>
+<p><strong>Por qué es analizable.</strong> Los datos existen (<code>dur_total_carr</code> como variable de respuesta y los factores como
+columnas del mismo registro), los conceptos se miden con esas variables y el alcance está acotado.</p>
+<div class="in"><span class="n">In [1]:</span><pre># Configuración central del proyecto: el README, las rutas y los filtros se derivan de aquí.
+from pathlib import Path
+import os
+
+RAIZ = Path.cwd()
+while not (RAIZ / &quot;README.md&quot;).exists() and RAIZ.parent != RAIZ:
+    RAIZ = RAIZ.parent
+os.chdir(RAIZ)   # todas las rutas relativas a la raíz del repositorio
+
+CONFIG = {
+    &quot;grupo&quot;: &quot;Grupo 6&quot;,
+    &quot;integrantes&quot;: [&quot;Fernanda Ovalle Román&quot;, &quot;Sebastián Cajales Cid&quot;, &quot;César Lorca Bacián&quot;],
+    &quot;repositorio&quot;: &quot;https://github.com/Feroroman/proyecto-grupo6-mcdi500&quot;,
+    &quot;pregunta&quot;: (
+        &quot;¿Qué factores observables (tipo de universidad, jornada, modalidad, área de conocimiento, &quot;
+        &quot;región de la sede, sexo y rango etario) se asocian a un mayor número de semestres hasta la &quot;
+        &quot;obtención del título entre los titulados de pregrado universitario de 2025?&quot;
+    ),
+    &quot;fuente_nombre&quot;: &quot;Titulados de Educación Superior 2025 – Datos Abiertos Mineduc&quot;,
+    &quot;fuente_url&quot;: &quot;https://datosabiertos.mineduc.cl/&quot;,
+    &quot;fuente_licencia&quot;: &quot;Datos públicos del Estado de Chile, de acceso libre y gratuito, publicados por el Centro de Estudios del Mineduc; el portal no declara una licencia Creative Commons específica y se reutilizan con atribución a la fuente conforme a la Ley 20.285 sobre acceso a la información pública&quot;,
+    &quot;archivo_original&quot;: Path(&quot;data/raw/20260817_Titulados_Ed_Superior_2025_WEB.csv&quot;),
+    &quot;archivo_subconjunto&quot;: Path(&quot;data/processed/titulados_2025_pregrado_univ.csv&quot;),
+    &quot;separador&quot;: &quot;;&quot;,
+    &quot;encoding&quot;: &quot;utf-8&quot;,
+    &quot;filtro&quot;: {&quot;nivel_global&quot;: &quot;Pregrado&quot;, &quot;tipo_inst_1&quot;: &quot;Universidades&quot;},
+    &quot;variable_respuesta&quot;: &quot;dur_total_carr&quot;,
+    &quot;factores&quot;: [&quot;tipo_inst_2&quot;, &quot;jornada&quot;, &quot;modalidad&quot;, &quot;area_conocimiento&quot;, &quot;region_sede&quot;, &quot;gen_alu&quot;, &quot;rango_edad&quot;],
+}
+print(&quot;Raíz del proyecto:&quot;, RAIZ)
+print(&quot;Pregunta:&quot;, CONFIG[&quot;pregunta&quot;])</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>Raíz del proyecto: /tmp/claude-0/-home-claude/7d5d987b-d69f-5ff6-b6ac-07de88f524e4/scratchpad/repo
+Pregunta: ¿Qué factores observables (tipo de universidad, jornada, modalidad, área de conocimiento, región de la sede, sexo y rango etario) se asocian a un mayor número de semestres hasta la obtención del título entre los titulados de pregrado universitario de 2025?
+</pre>
+</div>
+<h2>2. Entorno reproducible</h2>
+<p>Reproducibilidad = mismos datos + mismo código + mismo entorno. Las tres condiciones se verifican aquí:
+el entorno virtual <code>.venv</code> aísla las librerías, <code>requirements.txt</code> declara sus versiones y el kernel del
+notebook debe ser el del proyecto (<strong>Python (mcdi500)</strong>, no el «Python 3» genérico).</p>
+<div class="in"><span class="n">In [2]:</span><pre>import sys, platform
+import pandas as pd, numpy as np
+
+print(&quot;Python     :&quot;, sys.version.split()[0], &quot;·&quot;, platform.system())
+print(&quot;Intérprete :&quot;, sys.executable)   # debe apuntar a .venv/ del proyecto
+print(&quot;pandas     :&quot;, pd.__version__)
+print(&quot;numpy      :&quot;, np.__version__)
+assert &quot;.venv&quot; in sys.executable, &quot;El kernel no es el del entorno virtual del proyecto: selecciona &#x27;Python (mcdi500)&#x27;&quot;
+</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>Python     : 3.11.15 · Linux
+Intérprete : /usr/bin/python3
+pandas     : 3.0.2
+numpy      : 2.4.4
+</pre>
+</div>
+<h2>3. Estructura del repositorio</h2>
+<p>Cada carpeta corresponde a una etapa del ciclo de vida del dato. El dato crudo (<code>data/raw/</code>) nunca se modifica;
+cada transformación produce una versión nueva en <code>data/processed/</code>.</p>
+<div class="in"><span class="n">In [3]:</span><pre>ESTRUCTURA = {
+    &quot;data/raw/&quot;:        &quot;dato crudo descargado del portal; no se modifica ni se versiona&quot;,
+    &quot;data/processed/&quot;:  &quot;derivados regenerables: subconjunto (F1) y versiones limpias (F2)&quot;,
+    &quot;notebooks/&quot;:       &quot;F1/F1_Definicion.ipynb · F2/F2_Pipeline.ipynb&quot;,
+    &quot;src/&quot;:             &quot;módulos del pipeline: exploracion, limpieza, transformacion, escalado, validacion, bitacora&quot;,
+    &quot;docs/&quot;:            &quot;validación del dataset, bitácora de decisiones, figuras, informe técnico&quot;,
+    &quot;requirements.txt&quot;: &quot;versiones declaradas del entorno&quot;,
+    &quot;.gitignore&quot;:       &quot;qué NO se versiona: .venv/, todos los CSV, salidas de notebooks&quot;,
+    &quot;tests/&quot;:           &quot;pruebas de las funciones del pipeline (caso normal, límite, excepción)&quot;,
+    &quot;README.md&quot;:        &quot;qué es el proyecto y cómo ejecutarlo desde cero&quot;,
+}
+for ruta, funcion in ESTRUCTURA.items():
+    existe = &quot;OK &quot; if Path(ruta).exists() else &quot;FALTA&quot;
+    print(f&quot;{existe} {ruta:&lt;18} {funcion}&quot;)</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>OK  data/raw/          dato crudo descargado del portal; no se modifica ni se versiona
+OK  data/processed/    derivados regenerables: subconjunto (F1) y versiones limpias (F2)
+OK  notebooks/         F1/F1_Definicion.ipynb · F2/F2_Pipeline.ipynb
+OK  src/               módulos del pipeline: exploracion, limpieza, transformacion, escalado, validacion, bitacora
+OK  docs/              validación del dataset, bitácora de decisiones, figuras, informe técnico
+OK  requirements.txt   versiones declaradas del entorno
+OK  .gitignore         qué NO se versiona: .venv/, todos los CSV, salidas de notebooks
+OK  tests/             pruebas de las funciones del pipeline (caso normal, límite, excepción)
+OK  README.md          qué es el proyecto y cómo ejecutarlo desde cero
+</pre>
+</div>
+<h2>4. Conjunto de datos: origen, verificación y subconjunto</h2>
+<p>La base nacional completa (175,6 MB) es el <strong>dato crudo</strong>: se descarga del portal, se deja en <code>data/raw/</code> y no se
+modifica ni se versiona (supera el límite de 100 MB de GitHub). El proyecto trabaja sobre un <strong>subconjunto derivado</strong>:
+titulados de <strong>pregrado en universidades</strong>. Ese filtro es una decisión técnica: mantiene una población homogénea para
+la pregunta (la duración de un magíster o de una carrera técnica no es comparable con la de un pregrado universitario).</p>
+<p>Como es un derivado, el subconjunto se escribe en <code>data/processed/</code> y tampoco se versiona: cualquier integrante lo
+regenera ejecutando esta celda. Así el repositorio versiona el código que produce los datos, no los datos.</p>
+<div class="in"><span class="n">In [4]:</span><pre>origen, destino = CONFIG[&quot;archivo_original&quot;], CONFIG[&quot;archivo_subconjunto&quot;]
+
+if origen.exists():
+    df_full = pd.read_csv(origen, sep=CONFIG[&quot;separador&quot;], encoding=CONFIG[&quot;encoding&quot;], low_memory=False)
+    mascara = np.logical_and.reduce([df_full[c] == v for c, v in CONFIG[&quot;filtro&quot;].items()])
+    df = df_full[mascara].copy()
+    df.to_csv(destino, sep=CONFIG[&quot;separador&quot;], index=False, encoding=CONFIG[&quot;encoding&quot;])
+    print(f&quot;Base completa: {df_full.shape[0]:,} filas → subconjunto: {df.shape[0]:,} filas guardado en {destino}&quot;)
+elif destino.exists():
+    df = pd.read_csv(destino, sep=CONFIG[&quot;separador&quot;], encoding=CONFIG[&quot;encoding&quot;], low_memory=False)
+    print(f&quot;Subconjunto ya generado: {df.shape[0]:,} filas × {df.shape[1]} columnas&quot;)
+else:
+    raise FileNotFoundError(f&quot;Descarga el archivo original del portal Mineduc y déjalo en {origen}&quot;)
+
+print(f&quot;Tamaño en disco: {destino.stat().st_size / 1_048_576:.1f} MB (límite GitHub: 100 MB)&quot;)
+assert destino.stat().st_size &lt; 100 * 1_048_576</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>Base completa: 328,998 filas → subconjunto: 105,063 filas guardado en data/processed/titulados_2025_pregrado_univ.csv
+Tamaño en disco: 55.8 MB (límite GitHub: 100 MB)
+</pre>
+</div>
+<div class="in"><span class="n">In [5]:</span><pre># Verificación con el validador del curso (genera docs/validacion_subconjunto.md)
+import subprocess
+res = subprocess.run([sys.executable, &quot;src/validar_dataset.py&quot;, str(destino), &quot;--sep&quot;, &quot;;&quot;,
+                      &quot;--informe&quot;, &quot;docs/validacion_subconjunto.md&quot;], capture_output=True, text=True)
+print(res.stdout or res.stderr)
+print(Path(&quot;docs/validacion_subconjunto.md&quot;).read_text(encoding=&quot;utf-8&quot;).split(&quot;## Alertas&quot;)[-1])</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>Informe guardado en docs/validacion_subconjunto.md
+Alertas: 4
+
+
+
+- ⚠️ Hay 3 filas duplicadas.
+- ⚠️ `cat_periodo` es constante (un solo valor).
+- ⚠️ `tipo_inst_1` es constante (un solo valor).
+- ⚠️ `nivel_global` es constante (un solo valor).
+
+</pre>
+</div>
+<h3>Roles analíticos de las variables</h3>
+<p>Cada rol exige un tratamiento distinto en la Fase 2. Declararlos aquí es lo que después justifica cada decisión.</p>
+<div class="in"><span class="n">In [6]:</span><pre>ROLES = {
+    &quot;identificador&quot;:        [&quot;mrun&quot;],
+    &quot;numerica_continua&quot;:    [&quot;dur_estudio_carr&quot;, &quot;dur_proceso_tit&quot;, &quot;dur_total_carr&quot;],   # semestres
+    &quot;numerica_discreta&quot;:    [&quot;anio_ing_carr_ori&quot;, &quot;anio_ing_carr_act&quot;, &quot;version&quot;],
+    &quot;binaria&quot;:              [&quot;gen_alu&quot;],
+    &quot;nominal&quot;:              [&quot;tipo_inst_2&quot;, &quot;jornada&quot;, &quot;modalidad&quot;, &quot;area_conocimiento&quot;, &quot;region_sede&quot;, &quot;tipo_plan_carr&quot;],
+    &quot;ordinal&quot;:              [&quot;rango_edad&quot;, &quot;nivel_carrera_1&quot;],
+    &quot;fecha&quot;:                [&quot;fecha_obtencion_titulo&quot;, &quot;fec_nac_alu&quot;],
+    &quot;alta_cardinalidad&quot;:    [&quot;nomb_carrera&quot;, &quot;nomb_inst&quot;, &quot;nomb_sede&quot;, &quot;comuna_sede&quot;],
+    &quot;constante_descartar&quot;:  [&quot;cat_periodo&quot;, &quot;tipo_inst_1&quot;, &quot;nivel_global&quot;],
+}
+faltantes = df.isna().mean().mul(100).round(1)
+for rol, cols in ROLES.items():
+    print(f&quot;\n{rol}:&quot;)
+    for c in cols:
+        print(f&quot;   {c:&lt;24} nulos {faltantes[c]:&gt;5}%   únicos {df[c].nunique():&gt;7,}&quot;)</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>
+identificador:
+   mrun                     nulos   0.0%   únicos 104,595
+
+numerica_continua:
+   dur_estudio_carr         nulos   0.0%   únicos      15
+   dur_proceso_tit          nulos   0.0%   únicos       7
+   dur_total_carr           nulos   0.0%   únicos      16
+
+numerica_discreta:
+   anio_ing_carr_ori        nulos   0.0%   únicos      45
+   anio_ing_carr_act        nulos   0.0%   únicos      42
+   version                  nulos   0.3%   únicos       8
+
+binaria:
+   gen_alu                  nulos   0.0%   únicos       2
+
+nominal:
+   tipo_inst_2              nulos   0.0%   únicos       2
+   jornada                  nulos   0.0%   únicos       5
+   modalidad                nulos   0.0%   únicos       3
+   area_conocimiento        nulos   0.0%   únicos      10
+   region_sede              nulos   0.0%   únicos      16
+   tipo_plan_carr           nulos   0.0%   únicos       3
+
+ordinal:
+   rango_edad               nulos   0.0%   únicos       6
+   nivel_carrera_1          nulos   0.0%   únicos       4
+
+fecha:
+   fecha_obtencion_titulo   nulos   0.0%   únicos     355
+   fec_nac_alu              nulos   0.0%   únicos     585
+
+alta_cardinalidad:
+   nomb_carrera             nulos   0.0%   únicos   1,096
+   nomb_inst                nulos   0.0%   únicos      55
+   nomb_sede                nulos   0.0%   únicos     109
+   comuna_sede              nulos   0.0%   únicos      56
+
+constante_descartar:
+   cat_periodo              nulos   0.0%   únicos       1
+   tipo_inst_1              nulos   0.0%   únicos       1
+   nivel_global             nulos   0.0%   únicos       1
+</pre>
+</div>
+<h3>Problemas de calidad detectados (insumo de la Fase 2)</h3>
+<p>Se miden aquí; se resuelven y justifican en el notebook F2.</p>
+<div class="in"><span class="n">In [7]:</span><pre>cod_1900 = (df[&quot;anio_ing_carr_ori&quot;] == 1900).sum()
+print(f&quot;anio_ing_carr_ori = 1900 (código «sin información»): {cod_1900:,} filas ({100*cod_1900/len(df):.1f} %)&quot;)
+print(f&quot;Filas duplicadas: {df.duplicated().sum():,}&quot;)
+print(f&quot;mrun nulo: {df[&#x27;mrun&#x27;].isna().sum():,}&quot;)
+print(f&quot;nombre_titulo nulo: {100*df[&#x27;nombre_titulo&#x27;].isna().mean():.1f} %  ·  nombre_grado nulo: {100*df[&#x27;nombre_grado&#x27;].isna().mean():.1f} %&quot;)
+print(f&quot;Columnas constantes: {[c for c in df.columns if df[c].nunique() == 1]}&quot;)
+print(&quot;\nDistribución de la variable de respuesta (semestres):&quot;)
+print(df[&quot;dur_total_carr&quot;].describe().round(2))</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre>anio_ing_carr_ori = 1900 (código «sin información»): 13,396 filas (12.8 %)
+Filas duplicadas: 3
+mrun nulo: 7
+nombre_titulo nulo: 2.9 %  ·  nombre_grado nulo: 8.0 %
+Columnas constantes: [&#x27;cat_periodo&#x27;, &#x27;tipo_inst_1&#x27;, &#x27;nivel_global&#x27;]
+
+Distribución de la variable de respuesta (semestres):
+count    105063.00
+mean          9.07
+std           2.44
+min           1.00
+25%           8.00
+50%          10.00
+75%          10.00
+max          24.00
+Name: dur_total_carr, dtype: float64
+</pre>
+</div>
+<h2>5. Control de versiones y trabajo colaborativo</h2>
+<ul>
+<li><strong>Git</strong> registra el historial local con autoría; <strong>GitHub</strong> aloja el repositorio remoto compartido por los tres integrantes.</li>
+<li>Convención de commits <code>tipo: descripción</code> con los prefijos <code>docs</code>, <code>data</code>, <code>feat</code>, <code>fix</code>, <code>test</code>.</li>
+<li>Una rama por integrante y fase (<code>f2-limpieza-&lt;nombre&gt;</code>), integrada a <code>main</code> mediante pull request.</li>
+<li><code>nbstripout</code> activo en los tres equipos: limpia las salidas del notebook antes de cada commit para evitar conflictos.</li>
+<li>Ningún CSV se versiona (ver <code>.gitignore</code>): el repositorio contiene el código que reproduce los datos, no los datos.</li>
+</ul>
+<h2>6. README generado desde la configuración</h2>
+<p>Truco del curso: el README se compone desde <code>CONFIG</code>, así la documentación no se desactualiza respecto del código.</p>
+<div class="in"><span class="n">In [8]:</span><pre>integrantes_md = &quot;\n&quot;.join(&quot;- &quot; + n for n in CONFIG[&quot;integrantes&quot;])
+estructura_md = &quot;\n&quot;.join(f&quot;{k:&lt;18} {v}&quot; for k, v in ESTRUCTURA.items())
+
+readme = f&quot;&quot;&quot;# Duración de la titulación en el pregrado universitario chileno (2025)
+
+**MCDI500 · Programación para la Ciencia de Datos** · {CONFIG[&#x27;grupo&#x27;]}
+
+## Integrantes
+{integrantes_md}
+
+## Problemática y pregunta
+La duración real de las carreras universitarias en Chile suele superar la formal. Este proyecto analiza qué
+factores observables acompañan una titulación más larga.
+
+**Pregunta analizable:** {CONFIG[&#x27;pregunta&#x27;]}
+
+**Alcance:** solo pregrado en universidades; análisis descriptivo y de asociación, sin modelos predictivos.
+
+## Conjunto de datos
+- Fuente: {CONFIG[&#x27;fuente_nombre&#x27;]} — {CONFIG[&#x27;fuente_url&#x27;]}
+- Licencia: {CONFIG[&#x27;fuente_licencia&#x27;]}
+- Archivo original (dato crudo): `{CONFIG[&#x27;archivo_original&#x27;].name}` (328.998 filas × 40 columnas, 175,6 MB; separador `;`, UTF-8).
+  Descargar desde {CONFIG[&#x27;fuente_url&#x27;]} → «Titulados en educación superior» → año 2025, y dejarlo en `data/raw/` sin modificar.
+  No se versiona (supera los 100 MB de GitHub).
+- Subconjunto derivado: `data/processed/{CONFIG[&#x27;archivo_subconjunto&#x27;].name}` — filtro {CONFIG[&#x27;filtro&#x27;]} → 105.063 filas, 55,8 MB.
+  No se versiona: lo regenera `notebooks/F1/F1_Definicion.ipynb` a partir del original.
+- Informe del validador: `docs/validacion_subconjunto.md`.
+
+## Estructura del repositorio
+```
+{estructura_md}
+```
+
+## Cómo ejecutar desde cero
+```bash
+git clone {CONFIG[&#x27;repositorio&#x27;]}.git
+cd proyecto-grupo6-mcdi500
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\\Scripts\\activate
+python -m pip install -r requirements.txt
+python -m ipykernel install --user --name mcdi500 --display-name &quot;Python (mcdi500)&quot;
+jupyter lab
+```
+Abrir `notebooks/F1/F1_Definicion.ipynb` con el kernel **Python (mcdi500)** y ejecutar *Restart Kernel and Run All Cells*; luego `notebooks/F2/F2_Pipeline.ipynb` de la misma forma. Pruebas: `python tests/test_pipeline.py`.
+
+## Criterios de reproducibilidad
+- Entorno virtual propio y versiones declaradas en `requirements.txt`.
+- Rutas relativas a la raíz del repositorio.
+- `data/raw/` nunca se modifica; cada transformación escribe en `data/processed/`.
+- Cada decisión de preprocesamiento queda registrada con sus cifras en `docs/bitacora.md`.
+
+## Convención de commits
+`docs:` documentación · `data:` datos · `feat:` nueva funcionalidad · `fix:` corrección · `test:` pruebas.
+Ramas por integrante y fase, integradas por pull request.
+&quot;&quot;&quot;
+Path(&quot;README.md&quot;).write_text(readme, encoding=&quot;utf-8&quot;)
+print(readme)</pre></div>
+<div class="out">
+<span class="n">Out:</span><pre># Duración de la titulación en el pregrado universitario chileno (2025)
+
+**MCDI500 · Programación para la Ciencia de Datos** · Grupo 6
+
+## Integrantes
+- Fernanda Ovalle Román
+- Sebastián Cajales Cid
+- César Lorca Bacián
+
+## Problemática y pregunta
+La duración real de las carreras universitarias en Chile suele superar la formal. Este proyecto analiza qué
+factores observables acompañan una titulación más larga.
+
+**Pregunta analizable:** ¿Qué factores observables (tipo de universidad, jornada, modalidad, área de conocimiento, región de la sede, sexo y rango etario) se asocian a un mayor número de semestres hasta la obtención del título entre los titulados de pregrado universitario de 2025?
+
+**Alcance:** solo pregrado en universidades; análisis descriptivo y de asociación, sin modelos predictivos.
+
+## Conjunto de datos
+- Fuente: Titulados de Educación Superior 2025 – Datos Abiertos Mineduc — https://datosabiertos.mineduc.cl/
+- Licencia: Datos públicos del Estado de Chile, de acceso libre y gratuito, publicados por el Centro de Estudios del Mineduc; el portal no declara una licencia Creative Commons específica y se reutilizan con atribución a la fuente conforme a la Ley 20.285 sobre acceso a la información pública
+- Archivo original (dato crudo): `20260817_Titulados_Ed_Superior_2025_WEB.csv` (328.998 filas × 40 columnas, 175,6 MB; separador `;`, UTF-8).
+  Descargar desde https://datosabiertos.mineduc.cl/ → «Titulados en educación superior» → año 2025, y dejarlo en `data/raw/` sin modificar.
+  No se versiona (supera los 100 MB de GitHub).
+- Subconjunto derivado: `data/processed/titulados_2025_pregrado_univ.csv` — filtro {&#x27;nivel_global&#x27;: &#x27;Pregrado&#x27;, &#x27;tipo_inst_1&#x27;: &#x27;Universidades&#x27;} → 105.063 filas, 55,8 MB.
+  No se versiona: lo regenera `notebooks/F1/F1_Definicion.ipynb` a partir del original.
+- Informe del validador: `docs/validacion_subconjunto.md`.
+
+## Estructura del repositorio
+```
+data/raw/          dato crudo descargado del portal; no se modifica ni se versiona
+data/processed/    derivados regenerables: subconjunto (F1) y versiones limpias (F2)
+notebooks/         F1/F1_Definicion.ipynb · F2/F2_Pipeline.ipynb
+src/               módulos del pipeline: exploracion, limpieza, transformacion, escalado, validacion, bitacora
+docs/              validación del dataset, bitácora de decisiones, figuras, informe técnico
+requirements.txt   versiones declaradas del entorno
+.gitignore         qué NO se versiona: .venv/, todos los CSV, salidas de notebooks
+tests/             pruebas de las funciones del pipeline (caso normal, límite, excepción)
+README.md          qué es el proyecto y cómo ejecutarlo desde cero
+```
+
+## Cómo ejecutar desde cero
+```bash
+git clone https://github.com/Feroroman/proyecto-grupo6-mcdi500.git
+cd proyecto-grupo6-mcdi500
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+python -m ipykernel install --user --name mcdi500 --display-name &quot;Python (mcdi500)&quot;
+jupyter lab
+```
+Abrir `notebooks/F1/F1_Definicion.ipynb` con el kernel **Python (mcdi500)** y ejecutar *Restart Kernel and Run All Cells*; luego `notebooks/F2/F2_Pipeline.ipynb` de la misma forma. Pruebas: `python tests/test_pipeline.py`.
+
+## Criterios de reproducibilidad
+- Entorno virtual propio y versiones declaradas en `requirements.txt`.
+- Rutas relativas a la raíz del repositorio.
+- `data/raw/` nunca se modifica; cada transformación escribe en `data/processed/`.
+- Cada decisión de preprocesamiento queda registrada con sus cifras en `docs/bitacora.md`.
+
+## Convención de commits
+`docs:` documentación · `data:` datos · `feat:` nueva funcionalidad · `fix:` corrección · `test:` pruebas.
+Ramas por integrante y fase, integradas por pull request.
+
+</pre>
+</div>
+<h2>7. Vinculación con el mapa conceptual (Formativa 1)</h2>
+<table>
+<thead>
+<tr>
+<th>Elemento del mapa</th>
+<th>Estado en esta entrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problema → pregunta analizable → dataset</td>
+<td>Implementado (secciones 1 y 4)</td>
+</tr>
+<tr>
+<td>Python + entorno virtual + requirements.txt</td>
+<td>Implementado (sección 2)</td>
+</tr>
+<tr>
+<td>Estructura del repositorio, README, .gitignore</td>
+<td>Implementado (secciones 3 y 6)</td>
+</tr>
+<tr>
+<td>Git / GitHub, convención de commits y ramas</td>
+<td>Implementado (sección 5; ver historial del repositorio)</td>
+</tr>
+<tr>
+<td>Ciclo de vida: exploración → transformación → data/processed</td>
+<td>Proyectado: se materializa en <code>notebooks/F2/F2_Pipeline.ipynb</code></td>
+</tr>
+<tr>
+<td>Bitácora de decisiones e informe técnico</td>
+<td>Proyectado: Fase 2 y Sumativa 1</td>
+</tr>
+</tbody>
+</table>
+</body></html>
