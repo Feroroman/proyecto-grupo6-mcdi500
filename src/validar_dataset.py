@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import annotations
 """
 validar_dataset.py — Validación rápida de un dataset CSV.
 
