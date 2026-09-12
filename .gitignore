@@ -1,0 +1,16 @@
+# Entorno virtual: cada integrante lo crea con requirements.txt
+.venv/
+venv/
+
+# Datos: ningún CSV se versiona.
+#  - data/raw/  guarda el original descargado del portal Mineduc (175 MB, supera el límite de GitHub)
+#  - data/processed/ guarda los derivados; se regeneran con los notebooks (F1 crea el subconjunto)
+data/**/*.csv
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
