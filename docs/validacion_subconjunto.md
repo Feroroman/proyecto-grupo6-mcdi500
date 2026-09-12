@@ -17,42 +17,42 @@
 | `mrun` | float64 | 7 | 0.0% | 104,595 | 523.0 |
 | `gen_alu` | int64 | 0 | 0.0% | 2 | 1 |
 | `fec_nac_alu` | int64 | 0 | 0.0% | 585 | 199012 |
-| `rango_edad` | str | 0 | 0.0% | 6 | 30 a 34 Años |
+| `rango_edad` | object | 0 | 0.0% | 6 | 30 a 34 Años |
 | `anio_ing_carr_ori` | int64 | 0 | 0.0% | 45 | 2015 |
 | `sem_ing_carr_ori` | int64 | 0 | 0.0% | 3 | 1 |
 | `anio_ing_carr_act` | int64 | 0 | 0.0% | 42 | 2022 |
 | `sem_ing_carr_act` | int64 | 0 | 0.0% | 2 | 1 |
-| `nombre_titulo` | str | 2,997 | 2.9% | 1,741 | INGENIERO CIVIL INDUSTRIAL |
-| `nombre_grado` | str | 8,437 | 8.0% | 936 | LICENCIADO EN CIENCIAS DE LA INGENIERIA  |
+| `nombre_titulo` | object | 2,997 | 2.9% | 1,741 | INGENIERO CIVIL INDUSTRIAL |
+| `nombre_grado` | object | 8,437 | 8.0% | 936 | LICENCIADO EN CIENCIAS DE LA INGENIERIA  |
 | `fecha_obtencion_titulo` | int64 | 0 | 0.0% | 355 | 20251105 |
-| `tipo_inst_1` | str | 0 | 0.0% | 1 | Universidades |
-| `tipo_inst_2` | str | 0 | 0.0% | 2 | Universidades CRUCH |
-| `tipo_inst_3` | str | 0 | 0.0% | 3 | Universidades Privadas CRUCH |
+| `tipo_inst_1` | object | 0 | 0.0% | 1 | Universidades |
+| `tipo_inst_2` | object | 0 | 0.0% | 2 | Universidades CRUCH |
+| `tipo_inst_3` | object | 0 | 0.0% | 3 | Universidades Privadas CRUCH |
 | `cod_inst` | int64 | 0 | 0.0% | 55 | 88 |
-| `nomb_inst` | str | 0 | 0.0% | 55 | UNIVERSIDAD TECNICA FEDERICO SANTA MARIA |
+| `nomb_inst` | object | 0 | 0.0% | 55 | UNIVERSIDAD TECNICA FEDERICO SANTA MARIA |
 | `cod_sede` | int64 | 0 | 0.0% | 26 | 1 |
-| `nomb_sede` | str | 0 | 0.0% | 109 | CAMPUS CASA CENTRAL VALPARAISO |
+| `nomb_sede` | object | 0 | 0.0% | 109 | CAMPUS CASA CENTRAL VALPARAISO |
 | `cod_carrera` | float64 | 300 | 0.3% | 602 | 15.0 |
-| `nomb_carrera` | str | 0 | 0.0% | 1,096 | INGENIERIA CIVIL INDUSTRIAL |
-| `nivel_global` | str | 0 | 0.0% | 1 | Pregrado |
-| `nivel_carrera_1` | str | 0 | 0.0% | 4 | Profesional Con Licenciatura |
-| `nivel_carrera_2` | str | 0 | 0.0% | 2 | Carreras Profesionales |
+| `nomb_carrera` | object | 0 | 0.0% | 1,096 | INGENIERIA CIVIL INDUSTRIAL |
+| `nivel_global` | object | 0 | 0.0% | 1 | Pregrado |
+| `nivel_carrera_1` | object | 0 | 0.0% | 4 | Profesional Con Licenciatura |
+| `nivel_carrera_2` | object | 0 | 0.0% | 2 | Carreras Profesionales |
 | `dur_estudio_carr` | int64 | 0 | 0.0% | 15 | 7 |
 | `dur_proceso_tit` | int64 | 0 | 0.0% | 7 | 0 |
 | `dur_total_carr` | int64 | 0 | 0.0% | 16 | 7 |
-| `region_sede` | str | 0 | 0.0% | 16 | Valparaíso |
-| `provincia_sede` | str | 0 | 0.0% | 34 | VALPARAISO |
-| `comuna_sede` | str | 0 | 0.0% | 56 | VALPARAISO |
-| `jornada` | str | 0 | 0.0% | 5 | Vespertina |
-| `modalidad` | str | 0 | 0.0% | 3 | Presencial |
+| `region_sede` | object | 0 | 0.0% | 16 | Valparaíso |
+| `provincia_sede` | object | 0 | 0.0% | 34 | VALPARAISO |
+| `comuna_sede` | object | 0 | 0.0% | 56 | VALPARAISO |
+| `jornada` | object | 0 | 0.0% | 5 | Vespertina |
+| `modalidad` | object | 0 | 0.0% | 3 | Presencial |
 | `version` | float64 | 290 | 0.3% | 8 | 1.0 |
-| `tipo_plan_carr` | str | 0 | 0.0% | 3 | Plan Regular de Continuidad |
-| `area_conocimiento` | str | 0 | 0.0% | 10 | Tecnología |
-| `cine_f_97_area` | str | 0 | 0.0% | 8 | Ingeniería, Industria y Construcción |
-| `cine_f_97_subarea` | str | 0 | 0.0% | 22 | Ingeniería y Profesiones Afines |
-| `area_generica` | str | 0 | 0.0% | 213 | Ingeniería Civil Industrial |
-| `cine_f_13_area` | str | 0 | 0.0% | 10 | Ingeniería, Industria y Construcción |
-| `cine_f_13_subarea` | str | 0 | 0.0% | 28 | Ingeniería y Profesiones Afines |
+| `tipo_plan_carr` | object | 0 | 0.0% | 3 | Plan Regular de Continuidad |
+| `area_conocimiento` | object | 0 | 0.0% | 10 | Tecnología |
+| `cine_f_97_area` | object | 0 | 0.0% | 8 | Ingeniería, Industria y Construcción |
+| `cine_f_97_subarea` | object | 0 | 0.0% | 22 | Ingeniería y Profesiones Afines |
+| `area_generica` | object | 0 | 0.0% | 213 | Ingeniería Civil Industrial |
+| `cine_f_13_area` | object | 0 | 0.0% | 10 | Ingeniería, Industria y Construcción |
+| `cine_f_13_subarea` | object | 0 | 0.0% | 28 | Ingeniería y Profesiones Afines |
 
 ## Estadísticas numéricas
 
