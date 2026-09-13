@@ -78,3 +78,7 @@ Ramas por integrante y fase, integradas por pull request.
 
 - tests/test_proyecto.py: 8/8 pruebas superadas.
 - tests/test_pipeline.py: 11/11 pruebas superadas.
+
+### Ejecución local
+
+El entorno virtual del proyecto quedó preparado para continuar con la ejecución de los notebooks F1 y F2.
