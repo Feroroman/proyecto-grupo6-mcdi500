@@ -67,3 +67,9 @@ Ramas por integrante y fase, integradas por pull request.
 
 ## Ejecución verificada
 - César Lorca Bacián · macOS · Python 3.14.7 · 13-09-2026: pruebas 8/8 y 11/11, notebooks F1 y F2 ejecutados sin errores.
+### Entorno de ejecución verificado
+
+- César Lorca Bacián
+- Sistema operativo: macOS
+- Python: 3.14.7
+- Kernel Jupyter: Python (mcdi500)
