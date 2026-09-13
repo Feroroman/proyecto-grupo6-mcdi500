@@ -73,3 +73,8 @@ Ramas por integrante y fase, integradas por pull request.
 - Sistema operativo: macOS
 - Python: 3.14.7
 - Kernel Jupyter: Python (mcdi500)
+
+### Pruebas automatizadas
+
+- tests/test_proyecto.py: 8/8 pruebas superadas.
+- tests/test_pipeline.py: 11/11 pruebas superadas.
