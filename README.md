@@ -30,7 +30,8 @@ factores observables acompañan una titulación más larga.
 ```
 data/raw/          dato crudo descargado del portal; no se modifica ni se versiona
 data/processed/    derivados regenerables: subconjunto (F1) y versiones limpias (F2)
-notebooks/         F1/F1_Definicion.ipynb · F2/F2_Pipeline.ipynb
+notebooks/F1/      F1_Definicion.ipynb y mapa conceptual (mcdi500_s1_grupo6.pdf)
+notebooks/F2/      F2_Pipeline.ipynb (pipeline oficial) y F2_borrador_exploracion.ipynb
 src/               módulos: proyecto, exploracion, limpieza, transformacion, escalado, validacion, bitacora
 tests/             pruebas de las funciones (caso normal, límite, excepción)
 docs/              validación del dataset, bitácora, verificación, figuras, evidencias
@@ -38,7 +39,12 @@ requirements.txt   versiones declaradas del entorno
 .gitignore         qué NO se versiona: .venv/, todos los CSV, salidas de notebooks, .idea/
 README.md          qué es el proyecto y cómo ejecutarlo desde cero
 ```
-`notebooks/F2/F2_borrador_exploracion.ipynb` es un borrador de trabajo del equipo; el pipeline oficial es `F2_Pipeline.ipynb`.
+
+## Entregables de la evaluación (Fases 1 y 2)
+- **Informe técnico integrado:** Documento formal consolidado en formato PDF (`f1_s01_evaluacion_entregable_grupo6.pdf`), estructurado según los requerimientos institucionales (capítulos I a IX y Anexos técnicos A-D).
+- **Mapa conceptual:** Disponible en `notebooks/F1/mcdi500_s1_grupo6.pdf`.
+- **Notebooks ejecutables:** `notebooks/F1/F1_Definicion.ipynb` y `notebooks/F2/F2_Pipeline.ipynb`.
+
 
 ## Cómo ejecutar desde cero
 ```bash
