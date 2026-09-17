@@ -42,7 +42,7 @@ README.md          qué es el proyecto y cómo ejecutarlo desde cero
 ```
 
 ## Entregables de la evaluación (Fases 1 y 2)
-- **Informe técnico integrado:** Documento formal consolidado en formato PDF (`f1_eval_grupo6.pdf`), estructurado según los requerimientos institucionales (capítulos I a IX y Anexos técnicos A-D).
+- **Informe técnico integrado:** Documento formal consolidado en formato PDF (`f1_s01_evaluacion_entregable_grupo6.pdf`), estructurado según los requerimientos institucionales (capítulos I a IX y Anexos técnicos A-D).
 - **Mapa conceptual:** Disponible en `notebooks/F1/mcdi500_s1_grupo6.pdf`.
 - **Notebooks ejecutables:** `notebooks/F1/F1_Definicion.ipynb` y `notebooks/F2/F2_Pipeline.ipynb`.
 
