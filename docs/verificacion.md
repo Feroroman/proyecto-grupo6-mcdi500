@@ -1,6 +1,6 @@
 # Verificación y trazabilidad · Fase 3
 
-Generado automáticamente por `scripts/evidencias.py` el 24-09-2026 08:34.
+Generado automáticamente por `scripts/evidencias.py` el 25-09-2026 19:14.
 Todas las cifras de este documento salen del repositorio en el momento de generarlo; ninguna se transcribe de memoria.
 
 ## 1. Pruebas automatizadas
@@ -17,13 +17,13 @@ Suites ejecutadas correctamente: **2 de 5**.
 
 ## 2. Historial del repositorio
 
-- Commits totales en la rama actual: **34**
-- Ramas: `fase3-sebastian-informe`, `main`, `origin`, `origin/main`
+- Commits totales en la rama actual: **35**
+- Ramas: `fase3-sebastian-informe`, `main`, `origin`, `origin/fase3-cesar-algoritmos`, `origin/fase3-sebastian-informe`, `origin/main`
 
 | Autor | Commits |
 |---|---|
 | Fernanda Ovalle Román | 16 |
-| Sebastian Cajales Cid | 7 |
+| Sebastian Cajales Cid | 8 |
 | César Lorca Bacián | 5 |
 | Sebastian Cajales | 2 |
 | jaossandon | 2 |
@@ -33,6 +33,7 @@ Suites ejecutadas correctamente: **2 de 5**.
 Últimos commits:
 
 ```
+f07c0ea Sebastian Cajales Cid docs(f3): actualiza bitacora de verificacion
 f804b40 Sebastian Cajales Cid feat(f3): generador automatico de evidencias y verificacion
 65ae8c7 Sebastian Cajales docs: versiona copias ejecutadas de notebooks F1 y F2 excluidas de nbstripout
 3be3202 Sebastian Cajales docs: mueve el borrador de exploracion a docs/evidencias
@@ -44,7 +45,6 @@ ef09de9 Sebastian Cajales Cid Cambio de nombre de evaluacion, limpieza de archiv
 11a4f0b jaossandon Correción de informe realizado sobre 5 puntos pendientes
 575828a Fernanda Ovalle Román docs: reejecuta notebooks F1 y F2 y actualiza bitacora y figuras
 e2bb5b1 Feroroman Remove kernel restart instruction from notebook
-ad03375 Sebastian Cajales Cid docs: Nombre de nuevo integrante añadido
 ```
 
 ## 3. Arquitectura de módulos
