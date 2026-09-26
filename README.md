@@ -6,6 +6,7 @@
 - Fernanda Ovalle Román
 - Sebastián Cajales Cid
 - César Lorca Bacián
+- Jorge Álvarez Ossandón
 
 ## Problemática y pregunta
 La duración real de las carreras universitarias en Chile suele superar la formal. Este proyecto analiza qué

@@ -1,6 +1,6 @@
 # Bitácora de decisiones
 
-Generada el 2026-09-12 13:29
+Generada el 2026-09-15 14:22
 
 - [F2 · obtención] lectura de data/processed/titulados_2025_pregrado_univ.csv → 105,063 filas × 40 columnas (sep ';', UTF-8)
 - [F2 · exploración] código 1900 en anio_ing_carr_ori: 13,396 registros (12,8 %) con duración mediana 6 vs 10 semestres → no es un faltante aleatorio
