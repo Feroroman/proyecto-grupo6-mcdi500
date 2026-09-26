@@ -18,7 +18,7 @@ from typing import Any, Dict, List
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from algoritmos import (
+from src.algoritmos import (
     cuantil_ordenando,
     cuantil_quickselect,
     explorar_con_poda,
