@@ -78,8 +78,8 @@ objeto y se reaplican idénticos a datos nuevos, algo que con funciones sueltas 
 ## Entregables de la evaluación
 
 **Fases 1 y 2**
-- Informe técnico integrado en PDF, según los requerimientos institucionales (capítulos I a IX y anexos A–D).
-- Mapa conceptual: `docs/mcdi500_s1_grupo6.pdf`.
+- Informe técnico integrado: `docs/f1_s01_evaluacion_entregable_grupo6.pdf`, según los requerimientos institucionales (capítulos I a IX y anexos A–D).
+- Mapa conceptual: `docs/mapa_conceptual_grupo6.pdf`.
 - Notebooks ejecutables `notebooks/F1/F1_Definicion.ipynb` y `notebooks/F2/F2_Pipeline.ipynb`.
 
 **Fase 3**
@@ -102,7 +102,7 @@ python tests/test_proyecto.py
 python tests/test_pipeline.py
 python tests/test_pipeline_clases.py
 python tests/test_algoritmos.py
-python tests/test_complejidad.py
+python -m src.complejidad          # pruebas del medidor + mediciones
 
 jupyter lab
 ```
@@ -110,11 +110,6 @@ Con el kernel **Python (mcdi500)**, ejecutar *Restart Kernel and Run All Cells* 
 `notebooks/F1/F1_Definicion.ipynb` → `notebooks/F2/F2_Pipeline.ipynb` → `notebooks/F3/F3_Algoritmos_Complejidad.ipynb`.
 F1 genera el subconjunto y F2 el dataset limpio que consume F3, así que el orden importa.
 
-Para regenerar el registro de verificación con las cifras del momento:
-
-```bash
-python scripts/evidencias.py     # escribe docs/verificacion.md
-```
 
 ## Criterios de reproducibilidad
 - Entorno virtual propio y versiones declaradas en `requirements.txt`.
