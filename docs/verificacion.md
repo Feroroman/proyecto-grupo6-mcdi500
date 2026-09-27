@@ -1,25 +1,260 @@
-# Registro de verificación
+# Verificación y trazabilidad · Fase 3
 
-Trazabilidad del proceso de verificación del código: qué se verificó, cómo, cuándo y con qué resultado.
-Se actualiza en cada ejecución completa antes de un commit de entrega.
+Generado automáticamente por `scripts/evidencias.py` el 27-09-2026 12:07.
+Todas las cifras de este documento salen del repositorio en el momento de generarlo; ninguna se transcribe de memoria.
 
-| Fecha | Qué se verificó | Comando / procedimiento | Resultado | Evidencia |
-|---|---|---|---|---|
-| 2026-09-12 | Funciones del pipeline F2 (src/exploracion, limpieza, transformacion, escalado, validacion): casos normales, límite y excepciones | `python tests/test_pipeline.py` | 11/11 pruebas superadas | Anexo C del informe; salida en notebooks/F2 (celda 17) |
-| 2026-09-12 | Clase ProyectoF1 y validador (src/proyecto, src/validar_dataset): filtro, subconjunto, README, estructura, excepciones | `python tests/test_proyecto.py` | 8/8 pruebas superadas | Anexo C del informe |
-| 2026-09-12 | Notebook F1 completo con el kernel del proyecto | Kernel → Restart Kernel and Run All Cells | 8 celdas de código sin errores; subconjunto 105.063 × 40 (55,8 MB); validador OK | docs/evidencias/F1_Definicion_ejecutado.pdf |
-| 2026-09-12 | Notebook F2 completo (obtención → persistencia) | Kernel → Restart Kernel and Run All Cells | 18 celdas sin errores; 5 asserts del dataset final OK; propiedad del escalador OK; 105.060 × 84 guardado y releído | docs/evidencias/F2_Pipeline_ejecutado.pdf; docs/bitacora.md |
-| 2026-09-12 | Resultados intermedios del pipeline (faltantes, atípicos, comparación de imputaciones y de escaladores) | Celdas 3–14 del notebook F2 con salida impresa y figuras | Cifras coincidentes con la bitácora y con el informe (cap. X) | docs/figuras/*.png; docs/bitacora.md |
-| 2026-09-12 | Reproducibilidad del entorno | `python -m pip install -r requirements.txt`; `verificar_entorno()` en F1 | Kernel Python (mcdi500) dentro de .venv | Celda 2 del notebook F1 |
-| 2026-09-12 | Integridad del repositorio | `git status` limpio; ningún CSV versionado; historial con mensajes por convención | 11 commits, 2 autores | GitHub: historial de main |
+## 1. Pruebas automatizadas
 
-## Cómo repetir la verificación
+| Suite | Qué cubre | Comando | Resultado |
+|---|---|---|---|
+| `tests/test_proyecto.py` | Fase 1 · clase ProyectoF1 | `python tests/test_proyecto.py` | **OK** · 8/8 pruebas superadas |
+| `tests/test_pipeline.py` | Fase 2 · funciones del pipeline | `python tests/test_pipeline.py` | **OK** · 11/11 pruebas superadas |
+| `tests/test_pipeline_clases.py` | Fase 3 · jerarquía de clases | `python tests/test_pipeline_clases.py` | **OK** · 42/42 pruebas superadas |
+| `tests/test_algoritmos.py` | Fase 3 · algoritmos recursivos | `python tests/test_algoritmos.py` | **OK** · 49/49 pruebas superadas |
+| `tests/test_complejidad.py` | Fase 3 · medición de complejidad | `python tests/test_complejidad.py` | **OK** · OK |
 
-```bash
-source .venv/bin/activate
-python tests/test_proyecto.py && python tests/test_pipeline.py
-jupyter lab   # F1 y F2 con Restart Kernel and Run All Cells
-git status    # working tree clean; sin .csv
+Suites ejecutadas correctamente: **5 de 5**.
+
+## 2. Historial del repositorio
+
+- Commits totales en la rama actual: **58**
+- Ramas: `fase3-sebastian-informe`, `main`, `origin`, `origin/fase3-cesar-algoritmos`, `origin/fase3-integracion`, `origin/main`
+
+| Autor | Commits |
+|---|---|
+| Fernanda Ovalle Román | 23 |
+| Sebastian Cajales Cid | 12 |
+| César Lorca Bacián | 10 |
+| jaossandon | 5 |
+| Feroroman | 3 |
+| sebastiancajalescid | 2 |
+| Sebastian Cajales | 2 |
+| Cesar Antonio Lorca Bacian | 1 |
+
+> **Atención:** hay más combinaciones nombre/correo que autores distintos, lo que significa que alguien commiteó con dos identidades:
+> - `Cesar Antonio Lorca Bacian <154942382+cesarlorcabacian@users.noreply.github.com>`
+> - `César Lorca Bacián <calorcab@gmail.com>`
+> - `Fernanda Ovalle Román <p.ovalleroman@uandresbello.edu>`
+> - `Feroroman <p.ovalleroman@uandresbello.edu>`
+> - `Sebastian Cajales <s.cajalescid@uandresbello.edu>`
+> - `Sebastian Cajales Cid <s.cajalescid@uandresbello.edu>`
+> - `jaossandon <ossandonjorge81@gmail.com>`
+> - `sebastiancajalescid <s,cajalescid@uandresbello.edu>`
+> - `sebastiancajalescid <s.cajalescid@uandresbello.edu>`
+
+Últimos commits:
+
+```
+8709a0e Sebastian Cajales Cid merge: integra origin/main con modulos de algoritmos, complejidad, pipeline y notebook F3
+2ceb1ff sebastiancajalescid Merge pull request #6 from Feroroman/fase3-integracion
+9d7c302 Fernanda Ovalle Román fix(f3): integra los modulos de Cesar y Jorge y ejecuta el notebook completo
+1e0ea48 Feroroman Merge pull request #3 from Feroroman/fase3-fernanda-pipeline
+15cb805 Fernanda Ovalle Román merge: integra main y corrige las rutas de archivos citadas en el README
+3d9ea7c Feroroman Merge pull request #4 from Feroroman/fase3-jorge-complejidad
+c36840f jaossandon feat(f3): implementa POO, medicion de memoria y analisis con dataset real
+a88e635 Cesar Antonio Lorca Bacian Merge pull request #2 from Feroroman/fase3-cesar-algoritmos
+f5731ab Fernanda Ovalle Román fix(f3): corrige la lectura del CSV limpio y el filtro de la bandera
+a16e3df jaossandon fix: resuelve conflicto de pdf
+607e420 jaossandon fix: correccion nombre de asignatura a MCDI500
+3f87338 Fernanda Ovalle Román docs(f3): documenta la arquitectura de clases, la Fase 3 y el flujo de ramas
 ```
 
-Cada fila nueva debe citar el commit en que se hizo la verificación (`git log --oneline -1`).
+## 3. Arquitectura de módulos
+
+Leída directamente del código de `src/` con `ast`, no escrita a mano.
+
+| Módulo | Propósito | Clases | Funciones públicas | Depende de | Líneas |
+|---|---|---|---|---|---|
+| `algoritmos.py` | Fase 3 · Algoritmos estructurados y recursivos. | — | 9 | — | 304 |
+| `bitacora.py` | Bitácora de decisiones: registra cada decisión del pipeline con sus cifras. | — | 2 | — | 29 |
+| `complejidad.py` | Fase 3 · Análisis de Complejidad y Rendimiento. | `MedidorComplejidad`, `TestMedidorComplejidad` | 11 | `algoritmos` | 215 |
+| `escalado.py` | Fase 2 · Paso 9: escalamiento. Tres escaladores implementados con NumPy/pandas. | — | 4 | — | 59 |
+| `exploracion.py` | Fase 2 · Paso 6: medir antes de tocar nada. | — | 3 | — | 65 |
+| `limpieza.py` | Fase 2 · Paso 7: limpieza e imputación. | — | 6 | — | 87 |
+| `pipeline.py` | Fase 3 · Jerarquía de clases del pipeline de datos. | `Transformador`, `EliminadorDuplicados`, `CodigoAFaltante`, `ImputadorMedianaPorGrupo`, `EliminadorConstantes`, `CodificadorOrdinal`, `AgrupadorRaras`, `CodificadorOneHot`, `EscaladorRobusto`, `Pipeline` | 7 | — | 422 |
+| `proyecto.py` | Fase 1 · Configuración del proyecto como objeto. | `ProyectoF1` | 5 | — | 155 |
+| `transformacion.py` | Fase 2 · Paso 8: transformación por tipo de variable. | — | 5 | — | 61 |
+| `validacion.py` | Fase 2 · Paso 10: validar es demostrar, no afirmar. | — | 2 | — | 39 |
+| `validar_dataset.py` |  | — | 3 | — | 136 |
+
+Dependencias internas (lo que va en el diagrama del informe):
+
+```
+  algoritmos.py  ──>  complejidad.py
+```
+
+## 4. Archivos versionados
+
+| Carpeta | Archivos |
+|---|---|
+| `(raíz)` | 4 |
+| `data` | 2 |
+| `docs` | 24 |
+| `notebooks` | 5 |
+| `scripts` | 1 |
+| `src` | 12 |
+| `tests` | 4 |
+
+CSV versionados: **0** (correcto: ninguno).
+
+## 5. Salida completa de las pruebas
+
+### `tests/test_proyecto.py`
+
+```
+OK    test_excepciones
+OK    test_filtro_conserva_solo_pregrado_universitario
+OK    test_filtro_sin_coincidencias_devuelve_vacio
+OK    test_generar_subconjunto_escribe_archivo
+OK    test_readme_contiene_pregunta_e_integrantes
+OK    test_subconjunto_existente_se_reutiliza_sin_original
+OK    test_validador_detecta_separador_y_alertas
+OK    test_verificar_estructura_detecta_faltantes
+
+8/8 pruebas superadas
+```
+
+### `tests/test_pipeline.py`
+
+```
+OK    test_atipicos_ric_detecta_extremo
+OK    test_atipicos_serie_vacia
+OK    test_codigo_a_nulo_normal
+OK    test_columna_sin_nulos_no_imputa_nada
+OK    test_eliminar_duplicados_sin_duplicados
+OK    test_escaladores_cumplen_propiedad
+OK    test_excepciones
+OK    test_imputar_mediana_crea_bandera
+OK    test_one_hot_suma_uno
+OK    test_ordinal_respeta_orden_declarado
+OK    test_una_sola_categoria_one_hot
+
+11/11 pruebas superadas
+```
+
+### `tests/test_pipeline_clases.py`
+
+```
+── Caso normal ─────────────────────────────────────────────
+  OK    EliminadorDuplicados quita la fila repetida
+  OK    EliminadorDuplicados no toca el original
+  OK    CodigoAFaltante convierte los dos 1900 en NaN
+  OK    CodigoAFaltante informa las cifras
+  OK    CodigoAFaltante no toca el original
+  OK    ImputadorMedianaPorGrupo no deja nulos
+  OK    ImputadorMedianaPorGrupo deja la bandera
+  OK    La bandera marca exactamente los 2 imputados
+  OK    Las medianas quedan guardadas tras fit
+  OK    EliminadorConstantes elimina 'constante'
+  OK    EliminadorConstantes informa cuál eliminó
+  OK    CodificadorOrdinal respeta el orden declarado
+  OK    CodificadorOrdinal codifica el nivel más alto
+  OK    AgrupadorRaras agrupa las 2 categorías raras
+  OK    AgrupadorRaras conserva la frecuente
+  OK    AgrupadorRaras no toca la columna original
+  OK    CodificadorOneHot crea una columna por categoría
+  OK    Cada fila suma exactamente 1 en el grupo one-hot
+  OK    EscaladorRobusto deja mediana 0
+  OK    EscaladorRobusto deja RIC 1
+  OK    El pipeline ejecuta las 7 etapas
+  OK    El resumen trae una fila por etapa
+  OK    El resumen trae tiempo y memoria
+  OK    etapa_dominante() devuelve una etapa real
+  OK    El pipeline no modifica el DataFrame original
+  OK    cifras() devuelve una tabla no vacía
+  OK    La clase da el MISMO resultado que la función de la Fase 2
+
+── Caso límite ─────────────────────────────────────────────
+  OK    EliminadorDuplicados sobre una sola fila
+  OK    CodigoAFaltante con cero coincidencias informa 0
+  OK    AgrupadorRaras con una sola categoría no agrupa nada
+  OK    ImputadorMediana sin nulos imputa 0 casos
+  OK    Pipeline de una sola etapa funciona
+
+── Caso excepción ──────────────────────────────────────────
+  OK    apply() sin fit() lanza RuntimeError
+  OK    fit() con algo que no es DataFrame lanza TypeError
+  OK    Columna inexistente lanza KeyError
+  OK    Escalar una columna de texto lanza TypeError
+  OK    Ordinal con categoría fuera del orden lanza ValueError
+  OK    One-hot con columna ausente lanza KeyError
+  OK    Pipeline vacío lanza ValueError
+  OK    Pipeline con algo que no es Transformador lanza TypeError
+  OK    resumen() antes de ejecutar lanza RuntimeError
+  OK    Escalar una columna sin dispersión lanza ValueError
+
+────────────────────────────────────────────────────────────
+42/42 pruebas superadas
+```
+
+### `tests/test_algoritmos.py`
+
+```
+── Caso normal ─────────────────────────────────────────────
+  OK    merge_sort ordena correctamente
+  OK    merge_sort no modifica la lista original
+  OK    merge_sort registra profundidad cercana a log2(n)
+  OK    quickselect encuentra el elemento en la posición 0
+  OK    quickselect encuentra el elemento en la posición 1
+  OK    quickselect encuentra el elemento en la posición 150
+  OK    quickselect encuentra el elemento en la posición 299
+  OK    quickselect no modifica la lista original
+  OK    quickselect y ordenar dan el mismo cuantil q=0.0
+  OK    quickselect y ordenar dan el mismo cuantil q=0.25
+  OK    quickselect y ordenar dan el mismo cuantil q=0.5
+  OK    quickselect y ordenar dan el mismo cuantil q=0.75
+  OK    quickselect y ordenar dan el mismo cuantil q=1.0
+  OK    quickselect visita muchísimos menos nodos que merge_sort
+  OK    La poda encuentra exactamente los mismos hallazgos que la búsqueda completa
+  OK    La poda visita menos nodos que la búsqueda completa
+  OK    La poda registra las ramas que cortó
+  OK    Los hallazgos vienen ordenados de mayor a menor mediana
+  OK    Todos los hallazgos superan el umbral
+  OK    Todos los hallazgos cumplen el soporte mínimo
+  OK    La agregación anidada devuelve un grupo por combinación
+  OK    La agregación trae la diferencia respecto del área
+  OK    La agregación marca los grupos con soporte suficiente
+  OK    El vespertino aparece por encima del promedio de su área
+  OK    La agregación marca como insuficiente el grupo de 20 registros
+
+── Caso límite ─────────────────────────────────────────────
+  OK    merge_sort de una lista vacía
+  OK    merge_sort de un solo elemento
+  OK    merge_sort con todos los elementos idénticos
+  OK    merge_sort de una lista ya ordenada
+  OK    merge_sort de una lista al revés
+  OK    quickselect con un solo elemento (caso base)
+  OK    quickselect con todos los elementos idénticos
+  OK    quickselect con valores negativos y extremos
+  OK    cuantil de un solo elemento
+  OK    Elementos idénticos no producen recursión profunda
+  OK    Exploración sobre un DataFrame vacío no falla y no halla nada
+  OK    Umbral inalcanzable: sin hallazgos y todo podado en la raíz
+  OK    Soporte imposible: sin hallazgos
+  OK    Exploración con un solo factor
+
+── Caso excepción ──────────────────────────────────────────
+  OK    quickselect de una lista vacía lanza ValueError
+  OK    quickselect con k negativo lanza ValueError
+  OK    quickselect con k fuera de rango lanza ValueError
+  OK    cuantil con q mayor que 1 lanza ValueError
+  OK    cuantil de una secuencia vacía lanza ValueError
+  OK    Exploración sin factores lanza ValueError
+  OK    Exploración con columna inexistente lanza KeyError
+  OK    Exploración con respuesta inexistente lanza KeyError
+  OK    Exploración con respuesta de texto lanza TypeError
+  OK    Exploración con algo que no es DataFrame lanza TypeError
+
+────────────────────────────────────────────────────────────
+49/49 pruebas superadas
+```
+
+### `tests/test_complejidad.py`
+
+```
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.031s
+
+OK
+```
