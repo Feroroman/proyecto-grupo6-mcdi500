@@ -97,8 +97,9 @@ check("CodificadorOrdinal codifica el nivel más alto", out["rango_edad_ord"].ma
 
 t = AgrupadorRaras("carrera", min_frec=2)
 out = t.fit_apply(df)
-check("AgrupadorRaras agrupa las 2 categorías raras", (out["carrera"] == "OTRA").sum() == 2)
-check("AgrupadorRaras conserva la frecuente", (out["carrera"] == "Derecho").sum() == 6)
+check("AgrupadorRaras agrupa las 2 categorías raras", (out["carrera_agrupada"] == "OTRA").sum() == 2)
+check("AgrupadorRaras conserva la frecuente", (out["carrera_agrupada"] == "Derecho").sum() == 6)
+check("AgrupadorRaras no toca la columna original", out["carrera"].equals(df["carrera"]))
 
 t = CodificadorOneHot(["jornada"])
 out = t.fit_apply(df)
@@ -155,7 +156,7 @@ una_cat = df.copy()
 una_cat["carrera"] = "Derecho"
 t = AgrupadorRaras("carrera", min_frec=2)
 out = t.fit_apply(una_cat)
-check("AgrupadorRaras con una sola categoría no agrupa nada", (out["carrera"] == "OTRA").sum() == 0)
+check("AgrupadorRaras con una sola categoría no agrupa nada", (out["carrera_agrupada"] == "OTRA").sum() == 0)
 
 sin_nulos = df.copy()
 t = ImputadorMedianaPorGrupo("anio_ing", "jornada")

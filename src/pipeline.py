@@ -257,8 +257,11 @@ class AgrupadorRaras(Transformador):
 
     def _transformar(self, df: pd.DataFrame) -> pd.DataFrame:
         out = df.copy()
+        # Se escribe en una columna NUEVA y se conserva la original, igual que
+        # `agrupar_raras` en la Fase 2: el nombre de carrera sin agrupar se sigue
+        # necesitando para la trazabilidad de cada registro.
         # Vectorizado: una sola pasada con `where`, no un bucle fila por fila.
-        out[self.columna] = out[self.columna].where(
+        out[f"{self.columna}_agrupada"] = out[self.columna].where(
             out[self.columna].isin(self.frecuentes_), self.etiqueta)
         return out
 
