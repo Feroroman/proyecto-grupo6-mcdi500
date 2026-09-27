@@ -31,21 +31,62 @@ factores observables acompañan una titulación más larga.
 ```
 data/raw/          dato crudo descargado del portal; no se modifica ni se versiona
 data/processed/    derivados regenerables: subconjunto (F1) y versiones limpias (F2)
-notebooks/F1/      F1_Definicion.ipynb y mapa conceptual (mcdi500_s1_grupo6.pdf)
-notebooks/F2/      F2_Pipeline.ipynb (pipeline oficial) y F2_borrador_exploracion.ipynb
-src/               módulos: proyecto, exploracion, limpieza, transformacion, escalado, validacion, bitacora
-tests/             pruebas de las funciones (caso normal, límite, excepción)
+notebooks/F1/      F1_Definicion.ipynb (definición del problema y del entorno)
+notebooks/F2/      F2_Pipeline.ipynb (pipeline de limpieza y transformación)
+notebooks/F3/      F3_Algoritmos_Complejidad.ipynb (clases, algoritmos y complejidad)
+src/               módulos reutilizables (ver «Arquitectura del código»)
+tests/             pruebas de cada módulo: caso normal, caso límite y caso de excepción
+scripts/           utilidades del proyecto (generación automática de evidencias)
 docs/              validación del dataset, bitácora, verificación, figuras, evidencias
 requirements.txt   versiones declaradas del entorno
 .gitignore         qué NO se versiona: .venv/, todos los CSV, salidas de notebooks, .idea/
 README.md          qué es el proyecto y cómo ejecutarlo desde cero
 ```
 
-## Entregables de la evaluación (Fases 1 y 2)
-- **Informe técnico integrado:** Documento formal consolidado en formato PDF (`f1_s01_evaluacion_entregable_grupo6.pdf`), estructurado según los requerimientos institucionales (capítulos I a IX y Anexos técnicos A-D).
-- **Mapa conceptual:** Disponible en `notebooks/F1/mcdi500_s1_grupo6.pdf`.
-- **Notebooks ejecutables:** `notebooks/F1/F1_Definicion.ipynb` y `notebooks/F2/F2_Pipeline.ipynb`.
+## Arquitectura del código (`src/`)
 
+| Módulo | Responsabilidad | Fase |
+|---|---|---|
+| `proyecto.py` | Clase `ProyectoF1`: configuración del proyecto, verificación del entorno y de la estructura, generación del subconjunto | F1 |
+| `exploracion.py` | Perfil de valores faltantes, atípicos por rango intercuartílico, resumen de categorías | F2 |
+| `limpieza.py` | Duplicados, códigos de relleno, columnas constantes, comparación de estrategias de imputación | F2 |
+| `transformacion.py` | Codificación ordinal con orden declarado, one-hot, agrupación de categorías raras, derivación de fechas | F2 |
+| `escalado.py` | Escaladores estándar, min-max y robusto, con su comparación | F2 |
+| `validacion.py` | Comprobaciones automáticas del dataset final | F2 |
+| `bitacora.py` | Registro de decisiones con sus cifras y exportación a `docs/bitacora.md` | F2 |
+| `pipeline.py` | Jerarquía de clases: `Transformador` (base), una subclase por etapa y `Pipeline` que las compone | F3 |
+| `algoritmos.py` | Algoritmos recursivos: divide and conquer y exploración jerárquica con poda | F3 |
+| `complejidad.py` | Clase `MedidorComplejidad`: tiempo, memoria y ajuste contra modelos teóricos | F3 |
+
+### De funciones a clases (Fase 3)
+
+En la Fase 2 cada etapa del pipeline era una función suelta. `pipeline.py` las reescribe como una jerarquía
+de clases sin alterar el resultado numérico, que se verifica con asserts contra la salida de la Fase 2.
+
+- **`Transformador`** define el contrato que cumplen todas las etapas: `fit` aprende de los datos lo que
+  necesite (medianas de imputación, categorías frecuentes, mediana y rango intercuartílico del escalador),
+  `apply` aplica lo aprendido y devuelve un DataFrame nuevo.
+- **Nueve subclases** implementan una etapa cada una: `EliminadorDuplicados`, `CodigoAFaltante`,
+  `ImputadorMedianaPorGrupo`, `EliminadorConstantes`, `CodificadorOrdinal`, `AgrupadorRaras`,
+  `CodificadorOneHot` y `EscaladorRobusto`.
+- **`Pipeline`** las encadena e instrumenta tiempo y memoria de cada etapa, lo que permite identificar el
+  costo dominante del flujo.
+
+Separar `fit` de `apply` es lo que aporta la refactorización: los valores aprendidos quedan dentro del
+objeto y se reaplican idénticos a datos nuevos, algo que con funciones sueltas no era posible.
+
+## Entregables de la evaluación
+
+**Fases 1 y 2**
+- Informe técnico integrado: `docs/f1_s01_evaluacion_entregable_grupo6.pdf`, según los requerimientos institucionales (capítulos I a IX y anexos A–D).
+- Mapa conceptual: `docs/mapa_conceptual_grupo6.pdf`.
+- Notebooks ejecutables `notebooks/F1/F1_Definicion.ipynb` y `notebooks/F2/F2_Pipeline.ipynb`.
+
+**Fase 3**
+- Informe técnico `docs/f3_s02_grupo6.pdf`.
+- Notebook `notebooks/F3/F3_Algoritmos_Complejidad.ipynb`, ejecutado de principio a fin.
+- Módulos `src/pipeline.py`, `src/algoritmos.py` y `src/complejidad.py` con sus pruebas.
+- Figuras de eficiencia y complejidad en `docs/figuras/`.
 
 ## Cómo ejecutar desde cero
 ```bash
@@ -55,11 +96,20 @@ python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 python -m pip install -r requirements.txt
 python -m ipykernel install --user --name mcdi500 --display-name "Python (mcdi500)"
-python tests/test_proyecto.py && python tests/test_pipeline.py
+
+# las cinco suites de pruebas
+python tests/test_proyecto.py
+python tests/test_pipeline.py
+python tests/test_pipeline_clases.py
+python tests/test_algoritmos.py
+python -m src.complejidad          # pruebas del medidor + mediciones
+
 jupyter lab
 ```
-Abrir `notebooks/F1/F1_Definicion.ipynb` con el kernel **Python (mcdi500)** y ejecutar *Restart Kernel and Run All Cells*;
-luego `notebooks/F2/F2_Pipeline.ipynb` de la misma forma.
+Con el kernel **Python (mcdi500)**, ejecutar *Restart Kernel and Run All Cells* en este orden:
+`notebooks/F1/F1_Definicion.ipynb` → `notebooks/F2/F2_Pipeline.ipynb` → `notebooks/F3/F3_Algoritmos_Complejidad.ipynb`.
+F1 genera el subconjunto y F2 el dataset limpio que consume F3, así que el orden importa.
+
 
 ## Criterios de reproducibilidad
 - Entorno virtual propio y versiones declaradas en `requirements.txt`.
@@ -68,24 +118,31 @@ luego `notebooks/F2/F2_Pipeline.ipynb` de la misma forma.
 - Cada decisión de preprocesamiento queda registrada con sus cifras en `docs/bitacora.md`.
 - Cada verificación (pruebas, ejecución completa de notebooks) queda registrada en `docs/verificacion.md`.
 
-## Convención de commits
-`docs:` documentación · `data:` datos · `feat:` nueva funcionalidad · `fix:` corrección · `test:` pruebas.
-Ramas por integrante y fase, integradas por pull request.
+## Trabajo colaborativo
+
+**Convención de commits:** `tipo(fase): descripción`, con los tipos `docs`, `data`, `feat`, `fix` y `test`.
+
+**Ramas.** Cada integrante trabaja en su propia rama y la integra a `main` mediante pull request con un
+revisor asignado. La rama `main` está protegida: no admite commits directos.
+
+| Integrante | Rama | Revisa su pull request |
+|---|---|---|
+| Fernanda Ovalle Román | `fase3-fernanda-pipeline` | Sebastián Cajales |
+| César Lorca Bacián | `fase3-cesar-algoritmos` | Jorge Álvarez |
+| Jorge Álvarez Ossandón | `fase3-jorge-complejidad` | Fernanda Ovalle |
+| Sebastián Cajales Cid | `fase3-sebastian-informe` | César Lorca |
+
+**Propiedad de archivos.** Cada archivo tiene un único responsable. Los `.ipynb` son JSON y los `.docx` y
+`.pdf` son binarios: Git no puede fusionarlos línea por línea, así que dos personas editando el mismo
+archivo lo corrompen o se sobrescriben. Quien necesita código ajeno lo importa tras un `git pull`; nunca
+edita el archivo fuente de otro.
 
 ## Ejecución verificada
-- César Lorca Bacián · macOS · Python 3.14.7 · 13-09-2026: pruebas 8/8 y 11/11, notebooks F1 y F2 ejecutados sin errores.
-### Entorno de ejecución verificado
 
-- César Lorca Bacián
-- Sistema operativo: macOS
-- Python: 3.14.7
-- Kernel Jupyter: Python (mcdi500)
+| Integrante | Sistema | Python | Fecha | Resultado |
+|---|---|---|---|---|
+| César Lorca Bacián | macOS | 3.14.7 | 13-09-2026 | `test_proyecto` 8/8 y `test_pipeline` 11/11; notebooks F1 y F2 ejecutados sin errores |
+| Fernanda Ovalle Román | macOS | 3.9 | 25-09-2026 | `test_pipeline_clases` 41/41; jerarquía de clases verificada contra la salida de la Fase 2 |
 
-### Pruebas automatizadas
-
-- tests/test_proyecto.py: 8/8 pruebas superadas.
-- tests/test_pipeline.py: 11/11 pruebas superadas.
-
-### Ejecución local
-
-El entorno virtual del proyecto quedó preparado para continuar con la ejecución de los notebooks F1 y F2.
+El detalle completo de cada verificación —qué se comprobó, con qué comando, cuándo y con qué resultado—
+está en `docs/verificacion.md`.
