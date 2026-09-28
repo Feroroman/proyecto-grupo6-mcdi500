@@ -17,7 +17,7 @@ from typing import Any, Callable, Dict, List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Corrección crítica 3: Importación absoluta desde la raíz del repositorio[cite: 6]
+# Corrección crítica 3: Importación absoluta desde la raíz del repositorio
 from src.algoritmos import (
     cuantil_ordenando,
     cuantil_quickselect,
@@ -31,7 +31,7 @@ from src.algoritmos import (
 # ═══════════════════════════════════════════════════════════════════════
 class MedidorComplejidad:
     """Clase para encapsular la lógica de evaluación de rendimiento,
-    midiendo tiempo, memoria y llamadas recursivas de distintas funciones[cite: 7, 8].
+    midiendo tiempo, memoria y llamadas recursivas de distintas funciones.
     """
     def __init__(self, repeticiones: int = 5):
         self.repeticiones = repeticiones
@@ -45,14 +45,14 @@ class MedidorComplejidad:
         memorias: List[int] = []
 
         for _ in range(self.repeticiones):
-            tracemalloc.start()  # Captura de memoria exigida[cite: 8]
+            tracemalloc.start()  # Captura de memoria exigida
             inicio = time.time()
             
             resultado = funcion(*args)
             
             fin = time.time()
-            _, pico_memoria = tracemalloc.get_traced_memory()  # Extracción del pico de memoria[cite: 8]
-            tracemalloc.stop()  # Detención del rastreo[cite: 8]
+            _, pico_memoria = tracemalloc.get_traced_memory()  # Extracción del pico de memoria
+            tracemalloc.stop()  # Detención del rastreo
 
             tiempos.append(fin - inicio)
             memorias.append(pico_memoria)
@@ -118,7 +118,7 @@ class MedidorComplejidad:
 #  PRUEBAS UNITARIAS (TESTING BÁSICO)
 # ═══════════════════════════════════════════════════════════════════════
 class TestMedidorComplejidad(unittest.TestCase):
-    """Pruebas unitarias para validar la integridad del Medidor de Complejidad[cite: 9]."""
+    """Pruebas unitarias para validar la integridad del Medidor de Complejidad."""
     def setUp(self):
         self.medidor = MedidorComplejidad(repeticiones=1)
         
@@ -127,23 +127,23 @@ class TestMedidorComplejidad(unittest.TestCase):
         return list(range(n))
         
     def test_medir_devuelve_tiempo_positivo(self):
-        """Verifica que el medidor devuelva un tiempo de ejecución mayor a cero[cite: 9]."""
+        """Verifica que el medidor devuelva un tiempo de ejecución mayor a cero."""
         resultado = self.medidor.medir(self.funcion_dummy, 100)
         self.assertGreater(resultado["tiempo_promedio"], 0.0)
         self.assertGreaterEqual(resultado["memoria_pico_bytes"], 0)
         
     def test_falla_con_algo_que_no_es_funcion(self):
-        """Verifica que se lance un TypeError si el objetivo no es ejecutable[cite: 9]."""
+        """Verifica que se lance un TypeError si el objetivo no es ejecutable."""
         with self.assertRaises(TypeError):
             self.medidor.medir("un_string_cualquiera", 10)
             
     def test_comparar_falla_con_tamanos_desordenados(self):
-        """Verifica que comparar rechace listas de tamaño sin orden ascendente[cite: 9]."""
+        """Verifica que comparar rechace listas de tamaño sin orden ascendente."""
         with self.assertRaises(ValueError):
             self.medidor.comparar({"f": self.funcion_dummy}, [5000, 1000], lambda x: (x,))
             
     def test_comparar_devuelve_una_fila_por_tamano(self):
-        """Verifica que la salida de comparar tenga tantas filas como tamaños por algoritmo[cite: 9]."""
+        """Verifica que la salida de comparar tenga tantas filas como tamaños por algoritmo."""
         tamanos = [10, 20]
         df = self.medidor.comparar({"f": self.funcion_dummy}, tamanos, lambda x: (x,))
         self.assertEqual(len(df), len(tamanos))
@@ -157,7 +157,7 @@ def ejecutar_auditoria() -> None:
     ruta_datos = os.path.join("data", "processed", "titulados_2025_pregrado_univ_limpio.csv")
     
     try:
-        # Carga del dataset real exigida en los criterios[cite: 7, 9]
+        # Carga del dataset real exigida en los criterios
         df_real = pd.read_csv(ruta_datos, sep=";")
         duraciones = df_real["dur_total_carr"].dropna().tolist()
     except FileNotFoundError:
@@ -182,7 +182,7 @@ def ejecutar_auditoria() -> None:
     print("Midiendo tiempos y memoria sobre el dataset real...")
     resultados_df = medidor.comparar(candidatos_cuantiles, tamanos, inyectar_datos_reales)
 
-    # 3. Exportar figuras con los nombres solicitados por Sebastián[cite: 7, 8]
+    # 3. Exportar figuras con los nombres solicitados por Sebastián
     rutas_generadas = [
         medidor.graficar(
             resultados_df,
