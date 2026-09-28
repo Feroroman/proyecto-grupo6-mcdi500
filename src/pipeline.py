@@ -34,6 +34,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
+from src.escaladores import EstrategiaEscalado, crear_estrategia
+
 
 # ───────────────────────────────────────────────────────────────────────────
 #  Clase base
@@ -297,43 +299,66 @@ class CodificadorOneHot(Transformador):
         return out
 
 
-class EscaladorRobusto(Transformador):
-    """Escala columnas numéricas restando la mediana y dividiendo por el RIC.
+class EscaladorPorEstrategia(Transformador):
+    """Etapa de escalado que delega el CÓMO a una estrategia intercambiable.
 
-    Se elige el robusto por coherencia con lo decidido antes: ya se reconocieron
-    valores extremos (9,4 % de atípicos) y se imputó con mediana; centrar con la
-    media al escalar sería contradictorio.
+    Es el punto donde el patrón Strategy entra en el pipeline. Esta clase sabe
+    *cuándo* escalar y *qué* columnas, pero no contiene ninguna fórmula: la
+    recibe. Cambiar de criterio de escalado es cambiar el argumento, no el
+    código:
 
-    Mediana y RIC se aprenden en `fit` y quedan en `self.mediana_` / `self.ric_`.
-    Propiedad verificable del resultado: mediana 0 y RIC 1.
+    >>> Pipeline([..., EscaladorPorEstrategia(NUMERICAS, "robusto")])
+    >>> Pipeline([..., EscaladorPorEstrategia(NUMERICAS, "estandar")])
+
+    Cada columna recibe su propia instancia de la estrategia, porque los
+    parámetros aprendidos (centro y escala) son distintos para cada una.
     """
 
-    def __init__(self, columnas: Sequence[str]) -> None:
-        super().__init__("Escalado robusto")
+    def __init__(self, columnas: Sequence[str], estrategia: str = "robusto") -> None:
+        super().__init__(f"Escalado ({estrategia})")
         self.columnas = list(columnas)
-        self.mediana_: Dict[str, float] = {}
-        self.ric_: Dict[str, float] = {}
+        self.nombre_estrategia = estrategia
+        self.estrategias_: Dict[str, EstrategiaEscalado] = {}
 
     def _aprender(self, df: pd.DataFrame) -> None:
+        self.estrategias_ = {}
         for c in self.columnas:
             if c not in df.columns:
                 raise KeyError(f"La columna '{c}' no existe en el DataFrame")
             if not pd.api.types.is_numeric_dtype(df[c]):
                 raise TypeError(f"'{c}' no es numérica; no se puede escalar")
-            q1, q3 = df[c].quantile(0.25), df[c].quantile(0.75)
-            ric = q3 - q1
-            if ric == 0:
-                raise ValueError(f"'{c}' tiene rango intercuartílico 0; no se puede escalar")
-            self.mediana_[c] = float(df[c].median())
-            self.ric_[c] = float(ric)
+            self.estrategias_[c] = crear_estrategia(self.nombre_estrategia).ajustar(df[c])
 
     def _transformar(self, df: pd.DataFrame) -> pd.DataFrame:
         out = df.copy()
-        for c in self.columnas:
-            out[f"{c}_esc"] = (out[c] - self.mediana_[c]) / self.ric_[c]
-        self.cifras = {"columnas": len(self.columnas),
-                       "mediana": dict(self.mediana_), "ric": dict(self.ric_)}
+        for c, est in self.estrategias_.items():
+            out[f"{c}_esc"] = est.aplicar(out[c])
+        self.cifras = {
+            "estrategia": self.nombre_estrategia,
+            "columnas": len(self.columnas),
+            "propiedad": crear_estrategia(self.nombre_estrategia).propiedad,
+            "centro": {c: e.centro_ for c, e in self.estrategias_.items()},
+            "escala": {c: e.escala_ for c, e in self.estrategias_.items()},
+        }
         return out
+
+    def verificar(self, df: pd.DataFrame) -> Dict[str, bool]:
+        """¿Cada columna escalada cumple la propiedad que la estrategia promete?"""
+        return {c: bool(est.verificar(df[f"{c}_esc"])) for c, est in self.estrategias_.items()}
+
+
+class EscaladorRobusto(EscaladorPorEstrategia):
+    """Escalado robusto: el caso particular que este proyecto eligió.
+
+    Se conserva como clase propia porque es la decisión tomada en la Fase 2 y
+    así el pipeline se lee sin ambigüedad, pero ya no implementa nada: es
+    `EscaladorPorEstrategia` con la estrategia fijada. Esa es la ventaja del
+    patrón — la especialización cuesta tres líneas y no duplica ninguna fórmula.
+    """
+
+    def __init__(self, columnas: Sequence[str]) -> None:
+        super().__init__(columnas, estrategia="robusto")
+        self.nombre = "Escalado robusto"
 
 
 # ───────────────────────────────────────────────────────────────────────────
