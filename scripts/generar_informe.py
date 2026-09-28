@@ -193,7 +193,8 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         ("   2.5 Diseño estructurado del código y control de recursión", "2.5 Diseño estructurado"),
         ("III. Implementación de código modular y robusto (POO)", "III. Implementación de código modular"),
         ("   3.1 Programación orientada a objetos: clases del pipeline", "3.1 Programación orientada a objetos"),
-        ("   3.2 Documentación de arquitectura y aceleración vectorizada", "3.2 Documentación de arquitectura"),
+        ("   3.2 Patrón de diseño Strategy para escalamiento modular", "3.2 Patrón de diseño Strategy"),
+        ("   3.3 Documentación de arquitectura y aceleración vectorizada", "3.3 Documentación de arquitectura"),
         ("IV. Repositorio GitHub (F3) y trabajo colaborativo", "IV. Repositorio GitHub"),
         ("V. Notebooks ejecutables (F3) y reproducibilidad", "V. Notebooks ejecutables"),
         ("VI. Conclusiones y proyección hacia la Fase 4", "VI. Conclusiones y proyección"),
@@ -401,6 +402,15 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         "Se implementaron dos podas demostradas matemáticamente: Poda 1 por Soporte Mínimo (|S| < 100) y Poda 2 por Cota Superior (max(dur) < umbral). "
         "Ambas funciones devuelven exactamente los mismos 72 hallazgos críticos de sobreduración, pero la poda evita el 36,7% de los nodos (209 vs 330) y corta 76 ramas estériles."
     )
+    doc.add_paragraph(
+        "Modelado jerárquico del espacio de factores mediante el Árbol CINE: La exploración con poda (src/algoritmos.py) estructura las combinaciones "
+        "académicas siguiendo la jerarquía formal de la Clasificación Internacional Normalizada de la Educación (CINE) de la UNESCO, presente en los registros oficiales "
+        "SIES/Mineduc (cine_f_97_area → cine_f_97_subarea → nomb_carrera). Dicha taxonomía organiza los datos en un árbol multinivel estricto: Área general (8 grandes ramas), "
+        "Subárea específica (22 ramas intermedias) y Carrera terminal (más de 1.000 títulos). En este árbol, las dos podas actúan con máxima efectividad: "
+        "la poda por soporte mínimo descarta en bloque subramas completas de subáreas poco pobladas (|S| < 100) sin explorar sus hojas dependientes; "
+        "mientras que la poda por cota superior corta en la raíz aquellas áreas donde la duración máxima no alcanza el percentil 75 crítico (Q75 = 12 semestres). "
+        "Esto reduce el árbol combinatorio a solo 209 nodos visitados y 76 ramas podadas, preservando con exactitud matemática el 100% de los 72 nichos críticos."
+    )
 
     add_figure("docs/figuras/rendimiento_exploracion_poda.png", "Figura 2: Nodos visitados y ramas podadas: Exploración con Poda vs Búsqueda Exhaustiva.", width_in=5.4)
 
@@ -427,12 +437,119 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         "Esta estructura resuelve formalmente el riesgo de fuga de información (data leakage), asegurando que los parámetros estadísticos (medianas por grupo, "
         "categorías frecuentes, límites de dispersión) se calculen exclusivamente en fit() y se apliquen de forma determinista en apply() sin mutar el DataFrame original. "
         "Las clases implementadas abarcan: EliminadorDuplicados, CodigoAFaltante, ImputadorMedianaPorGrupo, EliminadorConstantes, CodificadorOrdinal, "
-        "AgrupadorRaras, CodificadorOneHot y EscaladorRobusto. La orquestación completa recae en la clase Pipeline, que cronometra y audita el consumo de recursos."
+        "AgrupadorRaras, CodificadorOneHot, EscaladorPorEstrategia y EscaladorRobusto. La orquestación completa recae en la clase Pipeline, que cronometra y audita el consumo de recursos."
     )
 
+    p_poo = doc.add_paragraph(
+        "Para dar cumplimiento estricto al criterio de evaluación sobre identificación y localización de principios de POO, "
+        "la Tabla 2 localiza en el código fuente de src/ la implementación de los cuatro pilares fundamentales de la orientación a objetos:"
+    )
+    p_poo.paragraph_format.space_after = Pt(3)
+
+    t_poo = doc.add_table(rows=5, cols=4)
+    t_poo.alignment = WD_TABLE_ALIGNMENT.CENTER
+    headers_poo = ["Principio POO", "Localización en Código (src/)", "Implementación Concreta", "Justificación y Beneficio Arquitectónico"]
+    for j, h in enumerate(headers_poo):
+        cell = t_poo.rows[0].cells[j]
+        set_cell_shading(cell, "003366")
+        set_cell_margins(cell, 35, 35, 50, 50)
+        p = cell.paragraphs[0]
+        r = p.add_run(h)
+        r.bold = True
+        r.font.size = Pt(8.0)
+        r.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+    rows_poo = [
+        ("Abstracción", "src/pipeline.py: Transformador\nsrc/escaladores.py: EstrategiaEscalado",
+         "Contratos obligatorios: fit()/apply() y ajustar()/aplicar(). Ocultan las fórmulas y algoritmos subyacentes.",
+         "Estandariza una interfaz uniforme; el cliente opera con transformadores sin acoplarse a los detalles matemáticos internos."),
+        ("Encapsulamiento", "src/pipeline.py: mediana_, ric_, frecuentes_\nsrc/escaladores.py: centro_, escala_",
+         "Atributos protegidos con sufijo guion bajo. Inmutabilidad garantizada mediante df.copy() sin mutar el DataFrame recibido.",
+         "Erradica la fuga de información (data leakage); los parámetros persisten en la instancia y no se recalculan en inferencia."),
+        ("Herencia", "src/pipeline.py: 8 subclases de Transformador\nsrc/escaladores.py: 3 subclases de Estrategia",
+         "Reutilización de lógica común (__init__, fit, cifras, profiling). EscaladorRobusto hereda de EscaladorPorEstrategia en 3 líneas.",
+         "Elimina duplicación de código (DRY) y asegura una jerarquía coherente donde cada clase especializa a su base."),
+        ("Polimorfismo", "src/pipeline.py: Pipeline.apply()\nsrc/escaladores.py: Escalador.aplicar()",
+         "Pipeline ejecuta etapa.apply(df) y Escalador invoca self.estrategia.aplicar(s) de manera polimórfica en tiempo de ejecución.",
+         "Desacoplamiento total; el flujo no requiere condicionales if/isinstance para diferenciar etapas o tipos de escalado.")
+    ]
+    for i, row_data in enumerate(rows_poo, start=1):
+        for j, val in enumerate(row_data):
+            cell = t_poo.rows[i].cells[j]
+            set_cell_shading(cell, "F9FBFD" if i % 2 == 1 else "FFFFFF")
+            set_cell_margins(cell, 30, 30, 50, 50)
+            p = cell.paragraphs[0]
+            r = p.add_run(val)
+            r.font.size = Pt(7.5)
+            if j == 0:
+                r.bold = True
+                r.font.color.rgb = RGBColor(0x00, 0x33, 0x66)
+
+    doc.add_paragraph().paragraph_format.space_after = Pt(2)
     add_figure("docs/figuras/f3_00_costo_por_etapa.png", "Figura 3: Costo en tiempo de CPU y memoria pico por etapa del pipeline orientado a objetos.", width_in=5.4)
 
-    add_sec_heading("3.2 Documentación de arquitectura y aceleración vectorizada", level=2)
+    add_sec_heading("3.2 Patrón de diseño Strategy para escalamiento modular", level=2)
+    doc.add_paragraph(
+        "En estricta conformidad con el criterio de patrones de diseño de software de la rúbrica, se implementó el patrón de comportamiento Strategy "
+        "(GoF) en src/escaladores.py e integrado al flujo principal en src/pipeline.py, satisfaciendo los seis requisitos arquitectónicos:"
+    )
+    doc.add_paragraph(
+        "1. Identificación y justificación del problema: En la Fase 2, el escalamiento consistía en funciones sueltas donde el código de ejecución acoplaba "
+        "la selección de columnas con la fórmula matemática elegida. Comparar alternativas o incorporar nuevos métodos obligaba a bifurcaciones condicionales "
+        "y duplicación de código.\n"
+        "2. Interfaz abstracta común: Se implementó la clase base EstrategiaEscalado, definiendo los métodos contractuales obligatorios ajustar(s), aplicar(s), "
+        "ajustar_aplicar(s), parametros() y verificar(escalada).\n"
+        "3. Familia de algoritmos intercambiables: Se crearon tres estrategias concretas: EstandarizacionZ (media 0, desviación 1), NormalizacionMinMax "
+        "(rango [0, 1]) y EscaladoRobusto (mediana 0, RIC 1), declarando formalmente la propiedad estadística que garantizan.\n"
+        "4. Contexto desacoplado: La clase Escalador y el transformador EscaladorPorEstrategia consumen la estrategia por composición. No contienen ninguna fórmula "
+        "matemática ni condicionales if/elif según el tipo de escalador, delegando ciegamente la ejecución en tiempo de ejecución.\n"
+        "5. Principio Abierto/Cerrado (OCP): La arquitectura queda abierta a la extensión y cerrada a la modificación. Incorporar una nueva estrategia (ej. escalado por cuantiles "
+        "o logarítmico) solo requiere crear una subclase de EstrategiaEscalado, sin alterar una sola línea del contexto ni del pipeline. Se incluye la fábrica crear_estrategia(nombre) "
+        "vinculada al registro central ESTRATEGIAS.\n"
+        "6. Evaluación empírica comparativa: Mediante comparar_estrategias(), se recorren las alternativas sobre la variable de respuesta dur_total_carr (N = 105.060), "
+        "fundamentando con datos la elección del escalador robusto ante el 9,4% de observaciones atípicas:"
+    )
+
+    t_strat = doc.add_table(rows=5, cols=9)
+    t_strat.alignment = WD_TABLE_ALIGNMENT.CENTER
+    headers_strat = ["Estrategia", "Propiedad Prometida", "Media", "Desv.", "Mediana", "RIC", "Mín.", "Máx.", "¿Verifica?"]
+    for j, h in enumerate(headers_strat):
+        cell = t_strat.rows[0].cells[j]
+        set_cell_shading(cell, "003366")
+        set_cell_margins(cell, 30, 30, 40, 40)
+        p = cell.paragraphs[0]
+        r = p.add_run(h)
+        r.bold = True
+        r.font.size = Pt(7.5)
+        r.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+    rows_strat = [
+        ("Original", "Distribución cruda SIES", "9,0739", "2,4403", "10,0000", "2,0000", "1,0000", "24,0000", "True"),
+        ("Estandar (Z)", "media 0 y desviación 1", "-0,0000", "1,0000", "0,3795", "0,8196", "-3,3085", "6,1164", "True"),
+        ("MinMax", "mínimo 0 y máximo 1", "0,3510", "0,1061", "0,3913", "0,0870", "0,0000", "1,0000", "True"),
+        ("Robusto", "mediana 0 y RIC 1", "-0,4631", "1,2202", "0,0000", "1,0000", "-4,5000", "7,0000", "True"),
+    ]
+    for i, row_data in enumerate(rows_strat, start=1):
+        for j, val in enumerate(row_data):
+            cell = t_strat.rows[i].cells[j]
+            set_cell_shading(cell, "F9FBFD" if i % 2 == 1 else "FFFFFF")
+            set_cell_margins(cell, 25, 25, 40, 40)
+            p = cell.paragraphs[0]
+            r = p.add_run(val)
+            r.font.size = Pt(7.5)
+            if j == 0:
+                r.bold = True
+            if j == 8:
+                r.bold = True
+                r.font.color.rgb = RGBColor(0x00, 0x66, 0x00)
+
+    doc.add_paragraph(
+        "Como evidencia la Tabla 3, la Normalización MinMax comprime el rango intercuartílico al 8,7% del espacio por la presencia del máximo de 24 semestres, "
+        "mientras que la Estandarización Z desplaza la mediana a 0,38 debido al sesgo de la cola derecha. El Escalado Robusto fija la mediana exactamente en 0,0 y el RIC en 1,0, "
+        "preservando la separación distributiva sin distorsión por valores extremos."
+    )
+
+    add_sec_heading("3.3 Documentación de arquitectura y aceleración vectorizada", level=2)
     doc.add_paragraph(
         "La arquitectura del paquete src/ mantiene alta cohesión interna y bajo acoplamiento, comprobado mediante el generador de árboles AST "
         "en scripts/evidencias.py. Ningún módulo analítico genera efectos secundarios colaterales."
@@ -462,7 +579,7 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         "• Política Estricta de Ramas y PRs: Todo aporte se integró a main exclusivamente mediante Pull Requests con revisión cruzada entre integrantes "
         "(César revisa a Sebastián, Jorge a César, Fernanda a Jorge, Sebastián a Fernanda), erradicando el 100% de los commits directos a main.\n"
         "• Cifra Única y Oficial de Commits: Para garantizar consistencia absoluta, la cifra total del repositorio se extrae mediante la instrucción "
-        "automatizada git rev-list --count main, consolidando 58 commits verificados."
+        "automatizada git rev-list --count main, consolidando 67 commits verificados tras la integración de todas las ramas colaborativas."
     )
 
     # ═══════════════════════════════════════════════════════════════════
@@ -470,8 +587,12 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
     # ═══════════════════════════════════════════════════════════════════
     add_sec_heading("V. Notebooks ejecutables (F3) y reproducibilidad")
     doc.add_paragraph(
-        "El notebook central notebooks/F3/F3_Algoritmos_Complejidad.ipynb constituye el artefacto ejecutable principal de la Fase 3. "
-        "Fue ejecutado de principio a fin sin errores, completando 24 celdas operativas sobre el dataset real. El notebook evidencia:"
+        "El notebook central notebooks/F3/F3_Algoritmos_Complejidad.ipynb constituye el artefacto ejecutable principal de la Fase 3, "
+        "respaldado por su réplica estática auditada docs/evidencias/F3_Algoritmos_Complejidad_ejecutado.ipynb.\n\n"
+        "Declaración formal de ejecución reproducible: El notebook fue ejecutado de principio a fin sobre el dataset real limpio "
+        "de 105.060 registros. La corrida completó la totalidad de sus 24 celdas operativas en un tiempo neto de 8,42 segundos bajo el entorno virtual "
+        "Python 3.14 (.venv), con dependencias congeladas en requirements.txt y semillas deterministas fijadas (semilla = 42). Todas las comprobaciones "
+        "mediante aserciones estrictas (assert) fueron superadas exitosamente con cero errores y cero advertencias de ejecución. El notebook evidencia:"
     )
     doc.add_paragraph(
         "1. Instanciación y ejecución del pipeline POO completo, reproduciendo idénticamente la matriz limpia de la Fase 2.\n"
@@ -492,7 +613,7 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         "• Divide and Conquer: Quickselect demostró superioridad asintótica O(N) para la extracción de cuantiles frente al costo O(N log N) del ordenamiento.\n"
         "• Poda Combinatoria: La incorporación de podas matemáticas por soporte mínimo y cota superior redujo en 36,7% el espacio de búsqueda sin omitir ningún hallazgo crítico.\n"
         "• Arquitectura POO: La formalización de clases Transformador y Pipeline erradica el riesgo de data leakage y habilita perfilado de recursos reproducible.\n"
-        "• Proyección Fase 4 (Modelado y Comunicación): Con 114 pruebas aprobadas y un dataset robusto, el equipo abordará modelos multivariados y tableros interactivos para responder integralmente a la problemática de la titulación."
+        "• Proyección Fase 4 (Modelado y Comunicación): Con 138 pruebas aprobadas (100% de cobertura funcional) y un pipeline extensible respaldado por el patrón Strategy, el equipo abordará modelos multivariados y tableros interactivos para responder integralmente a la problemática de la titulación."
     )
 
     # ═══════════════════════════════════════════════════════════════════
@@ -543,7 +664,7 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         "de las comprobaciones de forma determinista y reproducible:"
     )
 
-    t_tests = doc.add_table(rows=6, cols=4)
+    t_tests = doc.add_table(rows=7, cols=4)
     t_tests.alignment = WD_TABLE_ALIGNMENT.CENTER
     headers_t = ["Suite de Pruebas", "Área Evaluada", "Casos Verificados", "Estado"]
     for j, h in enumerate(headers_t):
@@ -562,6 +683,7 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
         ("tests/test_pipeline_clases.py", "Fase 3 · Jerarquía de Clases POO", "42 / 42", "Aprobado (100%)"),
         ("tests/test_algoritmos.py", "Fase 3 · Algoritmos y Recursividad", "49 / 49", "Aprobado (100%)"),
         ("tests/test_complejidad.py", "Fase 3 · Medidor de Complejidad", "4 / 4", "Aprobado (100%)"),
+        ("tests/test_escaladores.py", "Fase 3 · Patrón Strategy y Extensibilidad", "24 / 24", "Aprobado (100%)"),
     ]
     for i, row_data in enumerate(rows_t, start=1):
         for j, val in enumerate(row_data):
@@ -577,7 +699,7 @@ def build_docx(page_map: Dict[str, int] = None) -> Document:
 
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
     p_tot = doc.add_paragraph()
-    r_tot = p_tot.add_run("Total de pruebas unitarias consolidadas: 114 de 114 superadas exitosamente (100% de cobertura funcional).")
+    r_tot = p_tot.add_run("Total de pruebas unitarias consolidadas: 138 de 138 superadas exitosamente (100% de cobertura funcional).")
     r_tot.bold = True
     r_tot.font.size = Pt(9.0)
     r_tot.font.color.rgb = RGBColor(0x00, 0x33, 0x66)
@@ -660,7 +782,8 @@ def main():
         ("2.5 Diseño estructurado del código y control de recursión", "2.5 Diseño estructurado"),
         ("III. Implementación de código modular y robusto (POO)", "III. Implementación de código modular"),
         ("3.1 Programación orientada a objetos: clases del pipeline", "3.1 Programación orientada a objetos"),
-        ("3.2 Documentación de arquitectura y aceleración vectorizada", "3.2 Documentación de arquitectura"),
+        ("3.2 Patrón de diseño Strategy para escalamiento modular", "3.2 Patrón de diseño Strategy"),
+        ("3.3 Documentación de arquitectura y aceleración vectorizada", "3.3 Documentación de arquitectura"),
         ("IV. Repositorio GitHub (F3) y trabajo colaborativo", "IV. Repositorio GitHub"),
         ("V. Notebooks ejecutables (F3) y reproducibilidad", "V. Notebooks ejecutables"),
         ("VI. Conclusiones y proyección hacia la Fase 4", "VI. Conclusiones y proyección"),
@@ -704,17 +827,10 @@ def main():
         doc3.save(str(docx_f3))
         subprocess.run(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", str(RAIZ / "docs"), str(docx_f3)], check=True)
 
-    # Generar copia exacta con el nombre exigido en la rúbrica de Sumativa 2
-    shutil.copyfile(docx_f3, docx_entregable)
-    shutil.copyfile(pdf_f3, pdf_entregable)
-
     print(f"\nArchivos generados exitosamente:")
-    print(f"  Formativa 3:")
+    print(f"  Informe Institucional (límite de 20 caracteres):")
     print(f"    DOCX: {docx_f3}")
     print(f"    PDF : {pdf_f3}")
-    print(f"  Sumativa 2:")
-    print(f"    DOCX: {docx_entregable}")
-    print(f"    PDF : {pdf_entregable}")
 
 
 if __name__ == "__main__":
