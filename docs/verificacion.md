@@ -1,6 +1,6 @@
 # Verificación y trazabilidad · Fase 3
 
-Generado automáticamente por `scripts/evidencias.py` el 27-09-2026 12:07.
+Generado automáticamente por `scripts/evidencias.py` el 27-09-2026 22:53.
 Todas las cifras de este documento salen del repositorio en el momento de generarlo; ninguna se transcribe de memoria.
 
 ## 1. Pruebas automatizadas
@@ -17,17 +17,17 @@ Suites ejecutadas correctamente: **5 de 5**.
 
 ## 2. Historial del repositorio
 
-- Commits totales en la rama actual: **58**
-- Ramas: `fase3-sebastian-informe`, `main`, `origin`, `origin/fase3-cesar-algoritmos`, `origin/fase3-integracion`, `origin/main`
+- Commits totales en la rama actual: **67**
+- Ramas: `fase3-sebastian-informe`, `main`, `origin`, `origin/fase3-cesar-algoritmos`, `origin/fase3-integracion`, `origin/fase3-patron-strategy`, `origin/fase3-sebastian-informe`, `origin/main`
 
 | Autor | Commits |
 |---|---|
-| Fernanda Ovalle Román | 23 |
-| Sebastian Cajales Cid | 12 |
+| Fernanda Ovalle Román | 28 |
+| Sebastian Cajales Cid | 14 |
 | César Lorca Bacián | 10 |
 | jaossandon | 5 |
-| Feroroman | 3 |
-| sebastiancajalescid | 2 |
+| Feroroman | 4 |
+| sebastiancajalescid | 3 |
 | Sebastian Cajales | 2 |
 | Cesar Antonio Lorca Bacian | 1 |
 
@@ -45,18 +45,18 @@ Suites ejecutadas correctamente: **5 de 5**.
 Últimos commits:
 
 ```
+8621a08 sebastiancajalescid Merge pull request #7 from Feroroman/fase3-patron-strategy
+34c0f25 Fernanda Ovalle Román chore(f3): deja un solo informe en docs/
+f2787cb Fernanda Ovalle Román test(f3): 24 pruebas del patron y suites descubribles por unittest
+627f55e Fernanda Ovalle Román chore(f3): retira las marcas de referencia [cite: N] de los comentarios
+5f343ab Fernanda Ovalle Román refactor(f3): la etapa de escalado delega en una estrategia intercambiable
+8a912ba Fernanda Ovalle Román feat(f3): patron Strategy para el escalamiento, con fabrica de estrategias
+d36f6db Feroroman Merge pull request #1 from Feroroman/fase3-sebastian-informe
+0cbfd1e Sebastian Cajales Cid docs(f3): alinea informe institucional con rubrica oficial de Sumativa 2 y genera f3_s02_entregable_grupo6.pdf
+d9601ab Sebastian Cajales Cid docs(f3): informe institucional final integrado, verificacion de 114 pruebas y figuras empiricas
 8709a0e Sebastian Cajales Cid merge: integra origin/main con modulos de algoritmos, complejidad, pipeline y notebook F3
 2ceb1ff sebastiancajalescid Merge pull request #6 from Feroroman/fase3-integracion
 9d7c302 Fernanda Ovalle Román fix(f3): integra los modulos de Cesar y Jorge y ejecuta el notebook completo
-1e0ea48 Feroroman Merge pull request #3 from Feroroman/fase3-fernanda-pipeline
-15cb805 Fernanda Ovalle Román merge: integra main y corrige las rutas de archivos citadas en el README
-3d9ea7c Feroroman Merge pull request #4 from Feroroman/fase3-jorge-complejidad
-c36840f jaossandon feat(f3): implementa POO, medicion de memoria y analisis con dataset real
-a88e635 Cesar Antonio Lorca Bacian Merge pull request #2 from Feroroman/fase3-cesar-algoritmos
-f5731ab Fernanda Ovalle Román fix(f3): corrige la lectura del CSV limpio y el filtro de la bandera
-a16e3df jaossandon fix: resuelve conflicto de pdf
-607e420 jaossandon fix: correccion nombre de asignatura a MCDI500
-3f87338 Fernanda Ovalle Román docs(f3): documenta la arquitectura de clases, la Fase 3 y el flujo de ramas
 ```
 
 ## 3. Arquitectura de módulos
@@ -69,9 +69,10 @@ Leída directamente del código de `src/` con `ast`, no escrita a mano.
 | `bitacora.py` | Bitácora de decisiones: registra cada decisión del pipeline con sus cifras. | — | 2 | — | 29 |
 | `complejidad.py` | Fase 3 · Análisis de Complejidad y Rendimiento. | `MedidorComplejidad`, `TestMedidorComplejidad` | 11 | `algoritmos` | 215 |
 | `escalado.py` | Fase 2 · Paso 9: escalamiento. Tres escaladores implementados con NumPy/pandas. | — | 4 | — | 59 |
+| `escaladores.py` | Fase 3 · Patrón Strategy aplicado al escalamiento. | `EstrategiaEscalado`, `EstandarizacionZ`, `NormalizacionMinMax`, `EscaladoRobusto`, `Escalador` | 15 | — | 283 |
 | `exploracion.py` | Fase 2 · Paso 6: medir antes de tocar nada. | — | 3 | — | 65 |
 | `limpieza.py` | Fase 2 · Paso 7: limpieza e imputación. | — | 6 | — | 87 |
-| `pipeline.py` | Fase 3 · Jerarquía de clases del pipeline de datos. | `Transformador`, `EliminadorDuplicados`, `CodigoAFaltante`, `ImputadorMedianaPorGrupo`, `EliminadorConstantes`, `CodificadorOrdinal`, `AgrupadorRaras`, `CodificadorOneHot`, `EscaladorRobusto`, `Pipeline` | 7 | — | 422 |
+| `pipeline.py` | Fase 3 · Jerarquía de clases del pipeline de datos. | `Transformador`, `EliminadorDuplicados`, `CodigoAFaltante`, `ImputadorMedianaPorGrupo`, `EliminadorConstantes`, `CodificadorOrdinal`, `AgrupadorRaras`, `CodificadorOneHot`, `EscaladorPorEstrategia`, `EscaladorRobusto`, `Pipeline` | 8 | `escaladores` | 447 |
 | `proyecto.py` | Fase 1 · Configuración del proyecto como objeto. | `ProyectoF1` | 5 | — | 155 |
 | `transformacion.py` | Fase 2 · Paso 8: transformación por tipo de variable. | — | 5 | — | 61 |
 | `validacion.py` | Fase 2 · Paso 10: validar es demostrar, no afirmar. | — | 2 | — | 39 |
@@ -81,6 +82,7 @@ Dependencias internas (lo que va en el diagrama del informe):
 
 ```
   algoritmos.py  ──>  complejidad.py
+  escaladores.py  ──>  pipeline.py
 ```
 
 ## 4. Archivos versionados
@@ -89,11 +91,11 @@ Dependencias internas (lo que va en el diagrama del informe):
 |---|---|
 | `(raíz)` | 4 |
 | `data` | 2 |
-| `docs` | 24 |
+| `docs` | 25 |
 | `notebooks` | 5 |
-| `scripts` | 1 |
-| `src` | 12 |
-| `tests` | 4 |
+| `scripts` | 2 |
+| `src` | 13 |
+| `tests` | 7 |
 
 CSV versionados: **0** (correcto: ninguno).
 
@@ -254,7 +256,7 @@ OK    test_una_sola_categoria_one_hot
 ```
 ....
 ----------------------------------------------------------------------
-Ran 4 tests in 0.031s
+Ran 4 tests in 0.032s
 
 OK
 ```
