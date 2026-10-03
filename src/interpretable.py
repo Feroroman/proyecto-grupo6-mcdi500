@@ -7,7 +7,8 @@ interpretación sustantiva.
 
 Este módulo devuelve la versión legible. No invierte ninguna transformación,
 porque no hace falta: el pipeline de la Fase 2 fue no destructivo y agregó
-columnas en vez de reemplazarlas, así que las 41 originales siguen presentes.
+columnas en vez de reemplazarlas, así que 37 de las 40 columnas originales
+siguen presentes (las otras 3 las descartó la limpieza por ser constantes).
 Lo que sí hace es descartar las derivadas y corregir dos cosas que impiden
 graficar bien: el sexo codificado como 1/2 y el orden de las variables
 ordinales.
