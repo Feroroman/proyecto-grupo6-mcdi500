@@ -44,9 +44,13 @@ def graficar_f2_tamano_grupos(tabla_tamanos):
 
 def graficar_f3_duracion_jornada(tabla_jornada):
     fig, ax = plt.subplots(figsize=(10, 6))
-    paleta = [colores["acento"] if j == "Diurna" else colores["neutro"] for j in tabla_jornada["jornada"]]
+    # La paleta va como diccionario y con hue: seaborn la asigna por nivel, no
+    # por posicion, y desde la version 0.14 una lista sin hue deja de aceptarse.
+    paleta = {j: (colores["acento"] if j == "Diurna" else colores["neutro"])
+              for j in tabla_jornada["jornada"]}
     # La tabla de Fernanda ya trae la columna calculada como 'mediana'
-    sns.barplot(data=tabla_jornada, y="jornada", x="mediana", palette=paleta, ax=ax)
+    sns.barplot(data=tabla_jornada, y="jornada", x="mediana", palette=paleta,
+                hue="jornada", legend=False, ax=ax)
     
     ax.set_title("La jornada diurna registra mayor duración mediana que la vespertina", fontsize=14, pad=15)
     ax.set_xlabel("Mediana de duración (semestres)")
