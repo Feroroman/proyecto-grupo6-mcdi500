@@ -1,2 +1,2 @@
 *.ipynb filter=nbstripout
-*_ejecutado.ipynb !filter
+*_ejecutado.ipynb -filter
